@@ -1,0 +1,25 @@
+Вектор
+	Длина вектора
+	Коллинеарность (парралельность векторов)
+		сонаправленными
+		противоположно направленными
+	Модуль вектора
+	+ Сложение векторов
+	Модуль суммы векторов
+	- Разность векторов
+	Умножение вектора на число
+	Скалярное произведение векторов
+	Угол вектора
+	Поворот вектора
+	Поворот вектора относительно другого вектора
+	Magnitude
+
+Обнаружение столкновений (Collision detection) 
+	Дерево квадрантов (Quadtree)
+	Столконевенние axis-aligned bounding box
+	bullet-объект
+	Пересечение фигур
+	http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
+	http://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
+
+Web

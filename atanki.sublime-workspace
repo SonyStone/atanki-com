@@ -1,0 +1,840 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"co",
+				"comments"
+			],
+			[
+				"commen",
+				"comment"
+			],
+			[
+				"re",
+				"refersTo"
+			],
+			[
+				"comme",
+				"comments"
+			],
+			[
+				"comment",
+				"commentsCount"
+			],
+			[
+				"pos",
+				"position"
+			],
+			[
+				"ro",
+				"rotation"
+			],
+			[
+				"fo",
+				"focus"
+			],
+			[
+				"focus",
+				"focus"
+			],
+			[
+				"ta",
+				"tank"
+			],
+			[
+				"ca",
+				"camera"
+			],
+			[
+				"an",
+				"angle1"
+			],
+			[
+				"ra",
+				"rotation"
+			],
+			[
+				"po",
+				"position"
+			],
+			[
+				"to",
+				"toString"
+			],
+			[
+				"vec2",
+				"vec2"
+			],
+			[
+				"pr",
+				"prototype"
+			],
+			[
+				"tar",
+				"target"
+			],
+			[
+				"s",
+				"sin"
+			],
+			[
+				"x",
+				"x"
+			],
+			[
+				"Vector",
+				"Vector2d"
+			],
+			[
+				"i",
+				"i"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"Vec",
+				"Vector2d"
+			],
+			[
+				"pro",
+				"prototype"
+			],
+			[
+				"V",
+				"Vector2d"
+			],
+			[
+				"fu",
+				"function"
+			],
+			[
+				"draw",
+				"drawPoint"
+			],
+			[
+				"auto",
+				"autofocus\tAttr"
+			],
+			[
+				"ti",
+				"title\tTag"
+			],
+			[
+				"target",
+				"targetRotation"
+			],
+			[
+				"li",
+				"lineTo"
+			],
+			[
+				"move",
+				"moveTo"
+			],
+			[
+				"hu",
+				"hueI"
+			],
+			[
+				"tank",
+				"tankPath"
+			],
+			[
+				"gun",
+				"gunPath"
+			],
+			[
+				"wi",
+				"window"
+			],
+			[
+				"on",
+				"onMouseMove"
+			],
+			[
+				"mouse",
+				"mouseup"
+			],
+			[
+				"onM",
+				"onMouseUp"
+			],
+			[
+				"c",
+				"canvas"
+			],
+			[
+				"a",
+				"addEventListener"
+			],
+			[
+				"key",
+				"keydown"
+			],
+			[
+				"ball",
+				"ball"
+			],
+			[
+				"con",
+				"console"
+			],
+			[
+				"p",
+				"pixels"
+			],
+			[
+				"of",
+				"offset"
+			],
+			[
+				"for",
+				"for\tfor (…) {…} (Improved Native For-Loop)"
+			],
+			[
+				"fill",
+				"fillRect"
+			],
+			[
+				"crea",
+				"creatLinerGradient"
+			],
+			[
+				"be",
+				"bezierCurveTo"
+			],
+			[
+				"mou",
+				"mousemove"
+			],
+			[
+				"stro",
+				"stroke"
+			],
+			[
+				"stroke",
+				"strokeStyle"
+			],
+			[
+				"can",
+				"canvas"
+			],
+			[
+				"dr",
+				"drawFrame"
+			],
+			[
+				"rect",
+				"rect1"
+			],
+			[
+				"rec",
+				"rect2"
+			],
+			[
+				"blur",
+				"blur_mass"
+			],
+			[
+				"y",
+				"ySpeed"
+			],
+			[
+				"he",
+				"height"
+			],
+			[
+				"h",
+				"height"
+			],
+			[
+				"w",
+				"width"
+			],
+			[
+				"fa",
+				"false"
+			],
+			[
+				"ke",
+				"keyup"
+			],
+			[
+				"eve",
+				"eventPositionCapture"
+			],
+			[
+				"e",
+				"eventPositioncapture"
+			],
+			[
+				"is",
+				"isPressed"
+			],
+			[
+				"tou",
+				"touch"
+			],
+			[
+				"docu",
+				"document"
+			],
+			[
+				"document",
+				"documentElement"
+			],
+			[
+				"My",
+				"MyObject"
+			],
+			[
+				"I",
+				"Initializing"
+			],
+			[
+				"inc",
+				"include"
+			],
+			[
+				"dec",
+				"decltype"
+			],
+			[
+				"name",
+				"namespace"
+			],
+			[
+				"def",
+				"define"
+			],
+			[
+				"de",
+				"decltype"
+			],
+			[
+				"cons",
+				"constexpr"
+			],
+			[
+				"floa",
+				"floating-point"
+			],
+			[
+				"__",
+				"__init__"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "atankiServer/Tank.html",
+			"settings":
+			{
+				"buffer_size": 2539,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "atankiServer/javascript/vector2d.js",
+			"settings":
+			{
+				"buffer_size": 5664,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "atankiServer/server.js",
+			"settings":
+			{
+				"buffer_size": 701,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "pac",
+		"selected_items":
+		[
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"vm",
+				"View: Toggle Menu"
+			],
+			[
+				"",
+				"Package Control: List Packages"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"LiveReload: Enable/disable plugins",
+				"LiveReload: Enable/disable plug-ins"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 262.0,
+		"history":
+		[
+			"jshint --version",
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/Git/atanki-com",
+		"/D/Git/atanki-com/atankiServer",
+		"/D/Git/atanki-com/atankiServer/javascript"
+	],
+	"file_history":
+	[
+		"/D/Git/atanki-com/atanki/server.js",
+		"/D/Git/atanki-com/atanki/Tank.html",
+		"/D/Git/atanki-com/atankiServer/package.json",
+		"/D/Git/atanki-com/physics/test.html",
+		"/D/Git/atanki-com/physics/matter-js/src/render/Render.js",
+		"/D/Git/atanki-com/atanki/ToDo.txt",
+		"/D/Git/atanki-com/physics/matter-js/src/module/main.js",
+		"/D/Git/atanki-com/physics/matter-js/src/collision/SAT.js",
+		"/D/1D/Texts/механоиды",
+		"/E/Games/Механоиды/SAVES/MM_1.sav",
+		"/D/Setup/Smith Micro Moho Pro v12 0 0 20763 x64 Incl Keymaker-CORE/Moho12WindowsESD/Moho 12.0.0 Windows ESD/Readme and Eula/Readme.txt",
+		"/D/Setup/The Foundry Mischief 2.1.4/crack/install.txt",
+		"/D/1D/Muzic from dead deive.txt",
+		"/D/Git/atanki-com/physics/matter-js/src/collision/Detector.js",
+		"/D/Git/atanki-com/physics/matter-js/src/render/RenderPixi.js",
+		"/D/Git/atanki-com/physics/matter-js/src/module/license.js",
+		"/D/Git/atanki-com/atanki/vector2d.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/39-ship-sim_better keys2.html",
+		"/D/Git/atanki-com/atanki/camera.js",
+		"/D/Git/atanki-com/Test exampels/victor.js",
+		"/D/Git/atanki-com/Test exampels/Tank.html",
+		"/D/Git/atanki-com/Test exampels/utils.js",
+		"/D/Git/atanki-com/Test exampels/camera.js",
+		"/D/Git/atanki-com/Test exampels/vector2d.2.js",
+		"/D/Git/atanki-com/Test exampels/Vector2d_test.js",
+		"/D/Git/atanki-com/Test exampels/Vector2d_tests.html",
+		"/D/Git/atanki-com/Test exampels/Tank_vec.html",
+		"/D/Git/atanki-com/Test exampels/tank_vec.js",
+		"/D/Git/atanki-com/Test exampels/style.css",
+		"/D/Git/atanki-com/Test exampels/box.js",
+		"/D/Git/atanki-com/Test exampels/tank.js",
+		"/D/Git/atanki-com/Test exampels/vector2d_extended.js",
+		"/D/Setup/Revo Uninstaller Pro v3.1.6 Final Ml_Rus/Процедура лечения.txt",
+		"/D/1D/JavaScript LibraryFramework",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/51-drag-and-move-3.html",
+		"/D/Git/atanki-com/Test exampels/test.html",
+		"/D/1D/uselessinteresting.com/index.php",
+		"/D/1D/JavaScript/WebSocket/client.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/box.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/Tank.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/tank.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/style.css",
+		"/D/1D/JavaScript/RocetCanvas.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/55-triangle-collision.html",
+		"/D/1D/JavaScript/screencast_nodejs/server.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/utils.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/approx.js",
+		"/Z/Setup/Hide and Seek/AutoHotkey/AIMP d to z transfere.ahk",
+		"/Z/Setup/Hide and Seek/AutoHotkey/LuckyShot.ahk",
+		"/D/Program Portables/PortableApps/Sublime Text/Data/Packages/User/Base File.sublime-settings",
+		"/D/Program Portables/PortableApps/Sublime Text/Data/Packages/DocBlockr/Base File.sublime-settings",
+		"/C/Users/ilia/AppData/Local/Temp/7zOC9B2AF9F/package.json",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/vector2d.js",
+		"/D/1D/JavaScript/WebSocket.js",
+		"/D/1D/JavaScript/WebSocket/node_modules/ws/package.json",
+		"/D/1D/JavaScript/WebSocket/server.js",
+		"/D/1D/JavaScript/screencast_nodejs/package.json",
+		"/D/Setup/JetBrains WebStorm 2016.1.2 Final Eng/Процедура лечения.txt",
+		"/D/Setup/JetBrains WebStorm 2016.1.2 Final Eng/license.txt",
+		"/D/Program Portables/PortableApps/SkypePortable/Data/settings/My Skype Received Files/softSelectToJoint.py",
+		"/D/1D/JavaScript/WebSocket/node_modules/ws/README.md",
+		"/D/1D/JavaScript/WebSocket/serber.js",
+		"/D/Git/atanki-com/Arts/Untitled-1.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/55-keys-capture.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/54-easing-off.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/ship.js",
+		"/D/Git/atanki-com/Arts/Tanky.html",
+		"/C/Users/ilia/AppData/Local/Temp/ai14695486206.tmp/ai14695486206.txt",
+		"/C/Users/ilia/AppData/Local/Temp/ai14695485782.tmp/ai14695485782.txt",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/Tank.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/50-drag-and-move-1.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/48-touch-events.html",
+		"/D/Program Portables/PortableApps/Sublime Text/Data/Packages/Default/Default (Windows).sublime-keymap",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/46-friction-2.html",
+		"/D/1D/Multiplayer Game Programming.txt",
+		"/D/Program Portables/PortableApps/Sublime Text/Data/Packages/User/SublimeLinter.sublime-settings",
+		"/D/Pictures/material-design/visualelementsmanifest.xml",
+		"/D/Program Portables/PortableApps/VLCPortable/VLCPortable.visualelementsmanifest.xml",
+		"/C/Program Files/Adobe/Adobe Photoshop CC 2015/Photoshop.visualelementsmanifest.xml",
+		"/E/Steam/SteamApps/common/Blender/blender.visualelementsmanifest.xml",
+		"/D/Program Portables/PortableApps/SumatraPDF-3.1.1-64/visualelementsmanifest.xml",
+		"/D/Pictures/material-design/SumatraPDF.visualelementsmanifest.xml",
+		"/C/Users/ilia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Reading.visualelementsmanifest.xml",
+		"/D/Program Portables/PortableApps/WinDirStatPortable/WinDirStatPortable.visualelementsmanifest.xml",
+		"/D/Program Portables/PortableApps/UltraISO/UltraISO.visualelementsmanifest.xml",
+		"/D/Program Portables/PortableApps/SumatraPDF-3.1.1-64/SumatraPDF.visualelementsmanifest.xml",
+		"/D/Pictures/material-design/steam_modern_ui_tile_icon_for_windows_8___8_1___10_by_rexadde-d7vnw0k/Steam Modern UI Icon/Steam-OblyTile-00000076.xml",
+		"/D/Pictures/material-design/AIMP3 ICON/Info.txt",
+		"/D/Pictures/material-design/steam_modern_ui_tile_icon_for_windows_8___8_1___10_by_rexadde-d7vnw0k/Steam Modern UI Icon/README.txt",
+		"/D/1D/Python_tutorial.py",
+		"/D/Program Portables/PortableApps/Sublime Text/Data/Packages/User/Python 2.sublime-build",
+		"/E/Steam/SteamApps/common/Blender/2.77/scripts/presets/keyconfig/maya.py",
+		"/D/Documents/Backup_Logitech/Профиль по умолчанию.xml",
+		"/C/Users/ilia/AppData/Roaming/Adobe/Adobe Photoshop CC 2015/Adobe Photoshop CC 2015 Settings/PSUserConfig.txt",
+		"/D/Setup/Coolorus 2.5.7/Coolorus 2.5.7/coolorus_2.5.7.449_k/HTML/locale/ru_RU/messages.properties",
+		"/C/Users/ilia/AppData/Local/Temp/7zO8346FDF8/Readme.txt",
+		"/D/Setup/Coolorus 2.5.7/Coolorus 2.5.7/coolorus_2.5.7.449_k/HTML/js/main.js",
+		"/D/Setup/Coolorus 2.5.7/Coolorus 2.5.7/coolorus_2.5.7.449_k/SCRIPTS/Coolorus 2.5 - Toggle.jsx",
+		"/D/Setup/Coolorus 2.5.7/Coolorus 2.5.7/coolorus_2.5.7.449_k/Install Coolorus 2.5.jsx",
+		"/D/Program Portables/PortableApps/SumatraPDF-3.1.1-64/SumatraPDF-settings.txt",
+		"/C/Users/ilia/AppData/Roaming/Adobe/Adobe Photoshop CC 2015/Adobe Photoshop CC 2015 Settings/PSUSerConfig.txt",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/34-acceleraion-3 better keys.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/38-ship-sim.html",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/arrow.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/ball.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/40-removal.html",
+		"/C/Users/ilia/AppData/Local/Temp/7zO4C981BFD/ReadMe.txt",
+		"/D/Program Portables/PortableApps/SumatraPDF-3.1.1-64/SumatraPDF-settings.old.txt",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/Ship.js",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/17-mouse-distance.html",
+		"/D/1D/Между адом и раем.txt",
+		"/D/Git/atanki-com/atanki.txt",
+		"/D/1D/Стальные крылья - обзор.txt",
+		"/D/1D/Мемы наполняем.txt",
+		"/D/1D/Моё.txt",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/33-acceleraion-2.html",
+		"/Y/Export/lol/COC/CoC_CustomImagePack_v6_[RevampMod]/myGame3",
+		"/Y/Export/lol/COC/CoC_CustomImagePack_v6_[RevampMod]/myGame",
+		"/Y/Export/lol/COC/CoC_CustomImagePack_v6_[RevampMod]/readme.txt",
+		"/D/Downloads/ArtMoney Pro v7.44 Portable by KloneB@DGuY/Readme.txt",
+		"/Y/Export/lol/COC/CoC_CustomImagePack_v6_[RevampMod]/img_backups/Usable Images.txt",
+		"/Y/Export/lol/COC/CoC_CustomImagePack_v6_[RevampMod]/extra_Images/.Must be renamed to make usable.txt",
+		"/D/1D/JavaScript/Foundation HTML5 Animation/28-velocity-1.html",
+		"/D/Downloads/data.txt",
+		"/D/Рабочий стол/DriverDesktop/GitHubLog.txt",
+		"/D/Git/myScripts/README.md",
+		"/C/Users/ilia/AppData/Local/Temp/7zO079C43F2/aimp_control_plugin_ReadMe.txt",
+		"/D/1D/Геймдизайн"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"Example",
+			"setXY",
+			"this.pull",
+			"move",
+			"this.position",
+			"x",
+			"keyPressed",
+			"keyName",
+			"keyCode",
+			"keyPressed",
+			"keyname",
+			"Path",
+			"context",
+			"dista",
+			"mouse",
+			"getBound",
+			"ctrl+k",
+			"Quadro ",
+			"GeForce ",
+			"GeForce",
+			"GeForce \n",
+			")\n",
+			"ship",
+			"35",
+			"50",
+			"copy",
+			"clone",
+			"parseColor",
+			"PVL! ",
+			"faslse",
+			"01.%20Introduction%20to%20Houdini%2015/",
+			"file:///H:/Tutorials/Houdini/Houdini_LearningPath/",
+			"size_type",
+			"unsigned",
+			"SketchBook",
+			"Entertainment Creation Suite",
+			"hxxp",
+			"UnicodeError",
+			"UnicodeEncodeError"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"set",
+			"this.direction",
+			"pull",
+			"this.position.tank",
+			"testX",
+			"pressed",
+			"name",
+			"code",
+			"pressed",
+			"keyName",
+			"ctx",
+			"touch",
+			"getBounds",
+			"",
+			"ball",
+			"",
+			"http"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "atankiServer/Tank.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2539,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2457,
+								2457
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1200.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "atankiServer/javascript/vector2d.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 5664,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 600.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "atankiServer/server.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 701,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								401,
+								401
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 251.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/Python 2.sublime-build",
+	"project": "atanki.sublime-project",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"D:\\1D\\JavaScript_tutorial_2.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"D:\\1D\\JavaScript\\скринкаст по Node.js\\скринкаст по Node.sublime-workspace"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 177.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
