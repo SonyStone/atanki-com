@@ -1,12 +1,12 @@
 import Vector2d from "./vector2d";
 
-class Camera {
+export default class Camera {
 	public position: Vector2d;
 	public zoom;
 	public rotation;
 	public focus: Vector2d;
 
-	constructor(position, zoom, rotation) {
+	constructor(position?, zoom?, rotation?) {
 		this.position = position || new Vector2d();
 		this.zoom     = zoom     || 1;
 		this.rotation = rotation || 0;
@@ -36,6 +36,8 @@ class Camera {
 			focus = new Vector2d();
 		}
 		this.focus.set(canvas.width / 2, canvas.height / 2);
+
+		this.position = this.position.set(focus.positioning(this));
 	}
 
 	public focusingEasing(focus) {

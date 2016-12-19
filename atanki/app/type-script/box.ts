@@ -1,4 +1,4 @@
-class Box {
+export default class Box {
 
 	public x: number= 200;
 	public y: number = 200;
