@@ -109,6 +109,8 @@ export default class Utils {
 			d: { code: 68, pressed: false },
 			e: { code: 69, pressed: false },
 			q: { code: 81, pressed: false },
+			x: { code: 88, pressed: false },
+			z: { code: 90, pressed: false },
 			NumpadAdd: { code: 107, pressed: false },
 			NumpadSub: { code: 109, pressed: false }
 		};

@@ -50,24 +50,70 @@
 	var tank_1 = __webpack_require__(3);
 	var box_1 = __webpack_require__(4);
 	var camera_1 = __webpack_require__(5);
+	var quad_tree_1 = __webpack_require__(6);
+	var rectangle_1 = __webpack_require__(9);
 	var canvas = document.getElementById("canvas");
 	var context = canvas.getContext("2d");
 	var mouse = utils_1.default.captureMouse(canvas);
 	var keyboard = utils_1.default.captureKeyboard(window);
 	var log = document.getElementById("log");
-	var tank = new tank_1.default(30, 70);
-	var tank2 = new tank_1.default(-10, 20);
+	var tank = [];
+	var tankAmount = 10;
+	var player = 0;
+	for (var i = 0; i < tankAmount; i++) {
+	    tank.push(new tank_1.default(Math.random() * 1000, Math.random() * 1000));
+	    tank[i].color = utils_1.default.HSBtoRGB(Math.random() * 360, 75, 75);
+	}
 	var box = new box_1.default();
 	var cam = new camera_1.default();
+	var bounds = new rectangle_1.default(0, 0, 1000, 1000);
+	var tree = new quad_tree_1.default(bounds, false, 7);
+	function drawNode(node, ctx) {
+	    var bounds = node.bounds;
+	    ctx.save();
+	    ctx.translate(bounds.x, bounds.y);
+	    ctx.scale(1, 1);
+	    ctx.lineWidth = 2;
+	    ctx.strokeStyle = "#2B2B2B";
+	    ctx.globalAlpha = 1;
+	    ctx.save();
+	    ctx.beginPath();
+	    ctx.rect(0, 0, bounds.width, bounds.height);
+	    ctx.stroke();
+	    ctx.restore();
+	    ctx.restore();
+	    var len = node.nodes.length;
+	    for (var i = 0; i < len; i++) {
+	        drawNode(node.nodes[i], ctx);
+	    }
+	}
 	var camTarget = new vector2d_1.default(canvas.width / 2, canvas.height / 2);
 	var easing = 0.08;
 	(function drawFrame() {
 	    window.requestAnimationFrame(drawFrame, canvas);
 	    canvas.width = window.innerWidth;
 	    canvas.height = window.innerHeight;
-	    tank.player(keyboard, mouse, cam);
+	    if (keyboard.x.pressed) {
+	        keyboard.x.pressed = false;
+	        if (player + 1 < tankAmount) {
+	            player++;
+	        }
+	        else {
+	            player = 0;
+	        }
+	    }
+	    if (keyboard.z.pressed) {
+	        keyboard.z.pressed = false;
+	        if (player - 1 > -1) {
+	            player--;
+	        }
+	        else {
+	            player = tankAmount - 1;
+	        }
+	    }
+	    tank[player].player(keyboard, mouse, cam);
 	    cam.manipulation(keyboard, mouse);
-	    var v = (tank.position.sub(camTarget)).mult(easing);
+	    var v = (tank[player].position.sub(camTarget)).mult(easing);
 	    camTarget = camTarget.add(v);
 	    cam.focusing(canvas, camTarget);
 	    context.save();
@@ -78,16 +124,26 @@
 	    context.fillRect(-565, 300, 100, 100);
 	    context.fillRect(123, -215, 100, 100);
 	    context.fillRect(-133, 132, 100, 100);
-	    tank.color = utils_1.default.HSBtoRGB(300, 75, 75);
-	    tank.draw(context);
-	    tank.drawHelp(context);
+	    for (var _i = 0, tank_2 = tank; _i < tank_2.length; _i++) {
+	        var t = tank_2[_i];
+	        t.draw(context);
+	    }
+	    tank[player].drawHelp(context);
 	    box.draw(context);
+	    tree.clear();
+	    tree.insert(tank);
+	    for (var _a = 0, tank_3 = tank; _a < tank_3.length; _a++) {
+	        var t = tank_3[_a];
+	        tree.retrieve(t);
+	    }
+	    drawNode(tree.root, context);
 	    context.restore();
 	    log.value = null;
 	    log.value += "--- canvas ---" + "\n";
 	    log.value += "cam " + cam.toString() + "\n";
 	    log.value += "--- tank ---" + "\n";
-	    log.value += "tank " + tank.toString() + "\n";
+	    log.value += "play tank #" + player + "\n";
+	    log.value += "tank " + tank[player].toString() + "\n";
 	})();
 
 
@@ -309,6 +365,8 @@
 	            d: { code: 68, pressed: false },
 	            e: { code: 69, pressed: false },
 	            q: { code: 81, pressed: false },
+	            x: { code: 88, pressed: false },
+	            z: { code: 90, pressed: false },
 	            NumpadAdd: { code: 107, pressed: false },
 	            NumpadSub: { code: 109, pressed: false }
 	        };
@@ -496,6 +554,8 @@
 	        this.scaleY = 1;
 	        this.lineWidth = 2;
 	        this.transparency = 1;
+	        this.width = 5;
+	        this.height = 5;
 	        this.pull = new vector2d_1.default(x, y) || new vector2d_1.default();
 	    }
 	    Tank.prototype.player = function (keyboard, mouse, camera) {
@@ -750,6 +810,292 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = Camera;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var node_1 = __webpack_require__(7);
+	var bounds_node_1 = __webpack_require__(8);
+	var QuadTree = (function () {
+	    function QuadTree(bounds, pointQuad, maxDepth, maxChildren) {
+	        this.root = null;
+	        var node;
+	        if (pointQuad) {
+	            node = new node_1.default(bounds, 0, maxDepth, maxChildren);
+	        }
+	        else {
+	            node = new bounds_node_1.default(bounds, 0, maxDepth, maxChildren);
+	        }
+	        this.root = node;
+	    }
+	    QuadTree.prototype.insert = function (item) {
+	        if (item instanceof Array) {
+	            var len = item.length;
+	            for (var i = 0; i < len; i++) {
+	                this.root.insert(item[i]);
+	            }
+	        }
+	        else {
+	            this.root.insert(item);
+	        }
+	    };
+	    QuadTree.prototype.clear = function () {
+	        this.root.clear();
+	    };
+	    QuadTree.prototype.retrieve = function (item) {
+	        var out = this.root.retrieve(item).slice(0);
+	        return out;
+	    };
+	    return QuadTree;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = QuadTree;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Node = (function () {
+	    function Node(bounds, depth, maxDepth, maxChildren) {
+	        this.nodes = null;
+	        this.children = null;
+	        this.classConstructor = Node;
+	        this.bounds = null;
+	        this.depth = 0;
+	        this.maxChildren = 4;
+	        this.maxDepth = 4;
+	        this.bounds = bounds;
+	        this.children = [];
+	        this.nodes = [];
+	    }
+	    Node.prototype.insert = function (item) {
+	        if (this.nodes.length) {
+	            var index = this.findIndex(item);
+	            this.nodes[index].insert(item);
+	            return;
+	        }
+	        this.children.push(item);
+	        var len = this.children.length;
+	        if (!(this.depth >= this.maxDepth) && len > this.maxChildren) {
+	            this.subdivide();
+	            for (var i = 0; i < len; i++) {
+	                this.insert(this.children[i]);
+	            }
+	            this.children.length = 0;
+	        }
+	    };
+	    Node.prototype.retrieve = function (item) {
+	        if (this.nodes.length) {
+	            var index = this.findIndex(item);
+	            return this.nodes[index].retrieve(item);
+	        }
+	        return this.children;
+	    };
+	    Node.prototype.subdivide = function () {
+	        var depth = this.depth + 1;
+	        var bx = this.bounds.x;
+	        var by = this.bounds.y;
+	        var b_w_h = (this.bounds.width / 2);
+	        var b_h_h = (this.bounds.height / 2);
+	        var bx_b_w_h = bx + b_w_h;
+	        var by_b_h_h = by + b_h_h;
+	        this.nodes[Node.TOP_LEFT] = new this.classConstructor({
+	            x: bx,
+	            y: by,
+	            width: b_w_h,
+	            height: b_h_h,
+	        }, depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.TOP_RIGHT] = new this.classConstructor({
+	            x: bx_b_w_h,
+	            y: by,
+	            width: b_w_h,
+	            height: b_h_h,
+	        }, depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.BOTTOM_LEFT] = new this.classConstructor({
+	            x: bx,
+	            y: by_b_h_h,
+	            width: b_w_h,
+	            height: b_h_h,
+	        }, depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.BOTTOM_RIGHT] = new this.classConstructor({
+	            x: bx_b_w_h,
+	            y: by_b_h_h,
+	            width: b_w_h,
+	            height: b_h_h,
+	        }, depth, this.maxDepth, this.maxChildren);
+	    };
+	    Node.prototype.clear = function () {
+	        this.children.length = 0;
+	        var len = this.nodes.length;
+	        for (var i = 0; i < len; i++) {
+	            this.nodes[i].clear();
+	        }
+	        this.nodes.length = 0;
+	    };
+	    Node.prototype.findIndex = function (item) {
+	        var b = this.bounds;
+	        var left = (item.position.x > b.x + b.width / 2) ? false : true;
+	        var top = (item.position.y > b.y + b.height / 2) ? false : true;
+	        var index = Node.TOP_LEFT;
+	        if (left) {
+	            if (!top) {
+	                index = Node.BOTTOM_LEFT;
+	            }
+	        }
+	        else {
+	            if (top) {
+	                index = Node.TOP_RIGHT;
+	            }
+	            else {
+	                index = Node.BOTTOM_RIGHT;
+	            }
+	        }
+	        return index;
+	    };
+	    return Node;
+	}());
+	Node.TOP_LEFT = 0;
+	Node.TOP_RIGHT = 1;
+	Node.BOTTOM_LEFT = 2;
+	Node.BOTTOM_RIGHT = 3;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Node;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var node_1 = __webpack_require__(7);
+	var BoundsNode = (function (_super) {
+	    __extends(BoundsNode, _super);
+	    function BoundsNode(bounds, depth, maxChildren, maxDepth) {
+	        var _this = _super.call(this, bounds, depth, maxChildren, maxDepth) || this;
+	        _this.classConstructor = BoundsNode;
+	        _this.stuckChildren = null;
+	        _this.out = [];
+	        _this.stuckChildren = [];
+	        return _this;
+	    }
+	    BoundsNode.prototype.insert = function (item) {
+	        if (this.nodes.length) {
+	            var index = this.findIndex(item);
+	            var node = this.nodes[index];
+	            if (item.position.x >= node.bounds.x &&
+	                item.position.x + item.width <= node.bounds.x + node.bounds.width &&
+	                item.position.y >= node.bounds.y &&
+	                item.position.y + item.height <= node.bounds.y + node.bounds.height) {
+	                this.nodes[index].insert(item);
+	            }
+	            else {
+	                this.stuckChildren.push(item);
+	            }
+	            return;
+	        }
+	        this.children.push(item);
+	        var len = this.children.length;
+	        if (!(this.depth >= this.maxDepth) && len > this.maxChildren) {
+	            this.subdivide();
+	            for (var i = 0; i < len; i++) {
+	                this.insert(this.children[i]);
+	            }
+	            this.children.length = 0;
+	        }
+	    };
+	    BoundsNode.prototype.getChildren = function () {
+	        return this.children.concat(this.stuckChildren);
+	    };
+	    BoundsNode.prototype.retrieve = function (item) {
+	        var out = this.out;
+	        out.length = 0;
+	        if (this.nodes.length) {
+	            var index = this.findIndex(item);
+	            var node = this.nodes[index];
+	            if (item.position.x >= node.bounds.x &&
+	                item.position.x + item.width <= node.bounds.x + node.bounds.width &&
+	                item.position.y >= node.bounds.y &&
+	                item.position.y + item.height <= node.bounds.y + node.bounds.height) {
+	                out.push.apply(out, this.nodes[index].retrieve(item));
+	            }
+	            else {
+	                if (item.position.x <= this.nodes[node_1.default.TOP_RIGHT].bounds.x) {
+	                    if (item.position.y <= this.nodes[node_1.default.BOTTOM_LEFT].bounds.y) {
+	                        out.push.apply(out, this.nodes[node_1.default.TOP_LEFT].getAllContent());
+	                    }
+	                    if (item.position.y + item.height > this.nodes[node_1.default.BOTTOM_LEFT].bounds.y) {
+	                        out.push.apply(out, this.nodes[node_1.default.BOTTOM_LEFT].getAllContent());
+	                    }
+	                }
+	                if (item.position.x + item.width > this.nodes[node_1.default.TOP_RIGHT].bounds.x) {
+	                    if (item.position.y <= this.nodes[node_1.default.BOTTOM_RIGHT].bounds.y) {
+	                        out.push.apply(out, this.nodes[node_1.default.TOP_RIGHT].getAllContent());
+	                    }
+	                    if (item.position.y + item.height > this.nodes[node_1.default.BOTTOM_RIGHT].bounds.y) {
+	                        out.push.apply(out, this.nodes[node_1.default.BOTTOM_RIGHT].getAllContent());
+	                    }
+	                }
+	            }
+	        }
+	        out.push.apply(out, this.stuckChildren);
+	        out.push.apply(out, this.children);
+	        return out;
+	    };
+	    BoundsNode.prototype.getAllContent = function () {
+	        var out = this.out;
+	        if (this.nodes.length) {
+	            for (var i = 0; i < this.nodes.length; i++) {
+	                this.nodes[i].getAllContent();
+	            }
+	        }
+	        out.push.apply(out, this.stuckChildren);
+	        out.push.apply(out, this.children);
+	        return out;
+	    };
+	    BoundsNode.prototype.clear = function () {
+	        this.stuckChildren.length = 0;
+	        this.children.length = 0;
+	        var len = this.nodes.length;
+	        if (!len) {
+	            return;
+	        }
+	        for (var i = 0; i < len; i++) {
+	            this.nodes[i].clear();
+	        }
+	        this.nodes.length = 0;
+	    };
+	    return BoundsNode;
+	}(node_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = BoundsNode;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Rectangle = (function () {
+	    function Rectangle(x, y, width, height) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = width;
+	        this.height = height;
+	    }
+	    return Rectangle;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Rectangle;
 
 
 /***/ }

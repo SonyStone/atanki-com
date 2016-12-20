@@ -19,6 +19,10 @@ export default class Tank {
 	public lineWidth: number = 2;
 	public transparency: number = 1;
 
+	// specially for quard-tree
+	public width: number = 5;
+	public height: number = 5;
+
 	constructor(x?, y?) {
 		this.pull = new Vector2d(x, y) || new Vector2d();
 	}
