@@ -14,12 +14,12 @@ let keyboard = Utils.captureKeyboard((<any>window));
 let log = document.getElementById("log");
 
 
-let tank = [];
-let tankAmount = 10;
+let tanks: Tank[] = [];
+let tanksAmount = 20;
 let player = 0;
-for (let i = 0; i < tankAmount; i++) {
-	tank.push(new Tank(Math.random() * 1000, Math.random() * 1000));
-	tank[i].color = Utils.HSBtoRGB(Math.random() * 360, 75, 75);
+for (let i = 0; i < tanksAmount; i++) {
+	tanks.push(new Tank(Math.random() * 1000, Math.random() * 1000));
+	tanks[i].color = Utils.HSBtoRGB(Math.random() * 360, 75, 75);
 }
 
 let box = new Box();
@@ -72,7 +72,7 @@ let easing = 0.08;
 	// this is maddness!
 	if (keyboard.x.pressed) {
 		keyboard.x.pressed = false;
-		if ( player + 1 < tankAmount) {
+		if ( player + 1 < tanksAmount) {
 			player++;
 		} else {
 			player = 0;
@@ -83,15 +83,15 @@ let easing = 0.08;
 		if ( player - 1 > -1) {
 			player--;
 		} else {
-			player = tankAmount -1;
+			player = tanksAmount -1;
 		}
 	}
 
-	tank[player].player(keyboard, mouse, cam);
+	tanks[player].player(keyboard, mouse, cam);
 
 	cam.manipulation(keyboard, mouse);
 
-	let v = (tank[player].position.sub(camTarget)).mult(easing);
+	let v = (tanks[player].position.sub(camTarget)).mult(easing);
 	camTarget = camTarget.add(v);
 
 	cam.focusing(canvas, camTarget);
@@ -108,20 +108,41 @@ let easing = 0.08;
 	context.fillRect(-133, 132, 100, 100);
 
 
-	for (let t of tank) {
-		t.draw(context);
+	for (let tank of tanks) {
+		tank.draw(context);
 	}
 
-	tank[player].drawHelp(context);
+	tanks[player].drawHelp(context);
 	box.draw(context);
 
 	// QuadTree
 	tree.clear();
 
-	tree.insert(tank);
-	for (let t of tank) { tree.retrieve(t); }
+	tree.insert(tanks); // make virtual quad-tree greed
+	for (let tank of tanks) {
+		let items: Tank[] = tree.retrieve(tank);
+		for (let item of items) {
+			if (tank === item) {
+				continue;
+			}
+			if ( tank.isColliding && item.isColliding) {
+				continue;
+			}
 
-	drawNode(tree.root, context);
+			let d: Vector2d = tank.position.sub(item.position);
+			let radii = tank.radius + item.radius;
+			let colliding = d.magSq() < (radii * radii);
+			if (!tank.isColliding) {
+				tank.isColliding = colliding;
+			}
+			if (!item.isColliding) {
+				item.isColliding = colliding;
+			}
+		}
+
+	}
+
+	drawNode(tree.root, context); // draw virtual quad-tree greed
 
 	context.restore();
 
@@ -138,6 +159,6 @@ let easing = 0.08;
 
 	(<any>log).value += "--- tank ---" + "\n";
 	(<any>log).value += "play tank #" + player + "\n";
-	(<any>log).value += "tank " + tank[player].toString() + "\n";
+	(<any>log).value += "tank " + tanks[player].toString() + "\n";
 
 })();

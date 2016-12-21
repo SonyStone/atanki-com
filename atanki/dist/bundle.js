@@ -57,12 +57,12 @@
 	var mouse = utils_1.default.captureMouse(canvas);
 	var keyboard = utils_1.default.captureKeyboard(window);
 	var log = document.getElementById("log");
-	var tank = [];
-	var tankAmount = 10;
+	var tanks = [];
+	var tanksAmount = 20;
 	var player = 0;
-	for (var i = 0; i < tankAmount; i++) {
-	    tank.push(new tank_1.default(Math.random() * 1000, Math.random() * 1000));
-	    tank[i].color = utils_1.default.HSBtoRGB(Math.random() * 360, 75, 75);
+	for (var i = 0; i < tanksAmount; i++) {
+	    tanks.push(new tank_1.default(Math.random() * 1000, Math.random() * 1000));
+	    tanks[i].color = utils_1.default.HSBtoRGB(Math.random() * 360, 75, 75);
 	}
 	var box = new box_1.default();
 	var cam = new camera_1.default();
@@ -95,7 +95,7 @@
 	    canvas.height = window.innerHeight;
 	    if (keyboard.x.pressed) {
 	        keyboard.x.pressed = false;
-	        if (player + 1 < tankAmount) {
+	        if (player + 1 < tanksAmount) {
 	            player++;
 	        }
 	        else {
@@ -108,12 +108,12 @@
 	            player--;
 	        }
 	        else {
-	            player = tankAmount - 1;
+	            player = tanksAmount - 1;
 	        }
 	    }
-	    tank[player].player(keyboard, mouse, cam);
+	    tanks[player].player(keyboard, mouse, cam);
 	    cam.manipulation(keyboard, mouse);
-	    var v = (tank[player].position.sub(camTarget)).mult(easing);
+	    var v = (tanks[player].position.sub(camTarget)).mult(easing);
 	    camTarget = camTarget.add(v);
 	    cam.focusing(canvas, camTarget);
 	    context.save();
@@ -124,17 +124,35 @@
 	    context.fillRect(-565, 300, 100, 100);
 	    context.fillRect(123, -215, 100, 100);
 	    context.fillRect(-133, 132, 100, 100);
-	    for (var _i = 0, tank_2 = tank; _i < tank_2.length; _i++) {
-	        var t = tank_2[_i];
-	        t.draw(context);
+	    for (var _i = 0, tanks_1 = tanks; _i < tanks_1.length; _i++) {
+	        var tank = tanks_1[_i];
+	        tank.draw(context);
 	    }
-	    tank[player].drawHelp(context);
+	    tanks[player].drawHelp(context);
 	    box.draw(context);
 	    tree.clear();
-	    tree.insert(tank);
-	    for (var _a = 0, tank_3 = tank; _a < tank_3.length; _a++) {
-	        var t = tank_3[_a];
-	        tree.retrieve(t);
+	    tree.insert(tanks);
+	    for (var _a = 0, tanks_2 = tanks; _a < tanks_2.length; _a++) {
+	        var tank = tanks_2[_a];
+	        var items = tree.retrieve(tank);
+	        for (var _b = 0, items_1 = items; _b < items_1.length; _b++) {
+	            var item = items_1[_b];
+	            if (tank === item) {
+	                continue;
+	            }
+	            if (tank.isColliding && item.isColliding) {
+	                continue;
+	            }
+	            var d = tank.position.sub(item.position);
+	            var radii = tank.radius + item.radius;
+	            var colliding = d.magSq() < (radii * radii);
+	            if (!tank.isColliding) {
+	                tank.isColliding = colliding;
+	            }
+	            if (!item.isColliding) {
+	                item.isColliding = colliding;
+	            }
+	        }
 	    }
 	    drawNode(tree.root, context);
 	    context.restore();
@@ -143,7 +161,7 @@
 	    log.value += "cam " + cam.toString() + "\n";
 	    log.value += "--- tank ---" + "\n";
 	    log.value += "play tank #" + player + "\n";
-	    log.value += "tank " + tank[player].toString() + "\n";
+	    log.value += "tank " + tanks[player].toString() + "\n";
 	})();
 
 
@@ -556,6 +574,8 @@
 	        this.transparency = 1;
 	        this.width = 5;
 	        this.height = 5;
+	        this.radius = 20;
+	        this.isColliding = false;
 	        this.pull = new vector2d_1.default(x, y) || new vector2d_1.default();
 	    }
 	    Tank.prototype.player = function (keyboard, mouse, camera) {
@@ -623,7 +643,13 @@
 	        ctx.lineJoin = "round";
 	        ctx.lineCap = "round";
 	        ctx.fillStyle = this.color;
-	        ctx.strokeStyle = "#191919";
+	        if (this.isColliding) {
+	            ctx.strokeStyle = "#c40000";
+	            this.isColliding = false;
+	        }
+	        else {
+	            ctx.strokeStyle = "#191919";
+	        }
 	        ctx.globalAlpha = this.transparency;
 	        ctx.save();
 	        ctx.rotate(this.positionRotation);

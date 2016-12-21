@@ -22,6 +22,9 @@ export default class Tank {
 	// specially for quard-tree
 	public width: number = 5;
 	public height: number = 5;
+	public radius: number = 20;
+
+	public isColliding: boolean = false;
 
 	constructor(x?, y?) {
 		this.pull = new Vector2d(x, y) || new Vector2d();
@@ -104,7 +107,13 @@ export default class Tank {
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
 		ctx.fillStyle = this.color;
-		ctx.strokeStyle = "#191919";
+		if (this.isColliding) {
+			ctx.strokeStyle = "#c40000";
+			this.isColliding = false;
+		} else {
+			ctx.strokeStyle = "#191919";
+		}
+
 		ctx.globalAlpha = this.transparency;
 
 		ctx.save();
