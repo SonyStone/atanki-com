@@ -1,4 +1,4 @@
-import Vector2d from "./vector2d";
+import Vector2d from "../math/vector2d";
 
 export default class Utils {
 	public static captureMouse(element: HTMLAnchorElement) {

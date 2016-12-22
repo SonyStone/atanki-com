@@ -1,3 +1,5 @@
+import Node from "../quad-tree/node";
+
 export default class Rectangle {
 	public x: number;
 	public y: number;

@@ -15,10 +15,18 @@ export default class Vector2d {
 		return Math.atan2((vec1.y - vec2.y), (vec1.x - vec2.x));
 	}
 
+	/**
+	 * angleTo
+	 * Return new vector, to angle, maybe?
+	 */
+	public static clone(vec)  {
+		return new Vector2d(vec.x, vec.y);
+	}
+
 	public x: number;
 	public y: number;
 
-	constructor(x?, y?) {
+	constructor(x?: number, y?: number) {
 		this.x = x || 0;
 		this.y = y || 0;
 	}
@@ -231,6 +239,6 @@ export default class Vector2d {
 			this.x.toFixed(2) +
 			", y:" +
 			this.y.toFixed(2) +
-			"\n";
+			" ";
 	}
 }

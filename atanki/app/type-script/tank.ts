@@ -1,5 +1,6 @@
 import Utils from "./utils";
-import Vector2d from "./vector2d";
+import Vector2d from "../math/vector2d";
+import BoundingBox from "../collision/AABB";
 
 export default class Tank {
 	public pull: Vector2d;
@@ -23,8 +24,29 @@ export default class Tank {
 	public width: number = 5;
 	public height: number = 5;
 	public radius: number = 20;
-
 	public isColliding: boolean = false;
+
+	// specially for Axis Aligned Bounding Box
+	public boundingBox: BoundingBox;
+	public isCollidingboundingBox: boolean = false;
+	public option: any = {
+		lowerBound: this.position,
+		upperBound: this.position.add(new Vector2d(5, 5)),
+	};
+
+	public object: any = {
+		gun: {
+			length: 30,
+			width: 10,
+			turretRadius: 10,
+		},
+		tank: {
+			length: 40,
+			width: 30,
+		},
+	};
+
+
 
 	constructor(x?, y?) {
 		this.pull = new Vector2d(x, y) || new Vector2d();
@@ -59,46 +81,16 @@ export default class Tank {
 		// this.direction.setZero();
 	}
 
-	public draw(ctx) {
-		let gun = {
-			Length: 30,
-			Width: 10,
-			TurretRadius: 10
-		};
-		let tank = {
-			Length: 40,
-			Width: 30
-		};
-
+	public update() {
 		this.positionRotation = Vector2d.angleTo(this.pull, this.position);
 		this.position.x = this.pull.x - Math.cos(this.positionRotation) * 18;
 		this.position.y = this.pull.y - Math.sin(this.positionRotation) * 18;
 
-		function tankPath(ctx) {
-			ctx.beginPath();
-			ctx.rect(-tank.Length / 2, -tank.Width / 2, tank.Length, tank.Width);
-			ctx.moveTo(tank.Length / 2, 0);
-			ctx.lineTo(-tank.Length / 2, tank.Width / 2);
-			ctx.lineTo(-tank.Length / 2, -tank.Width / 2);
-			ctx.closePath();
-			ctx.fill();
-			ctx.stroke();
-		}
+		this.option.upperBound = this.position.add(new Vector2d(50, 50));
+		this.boundingBox = new BoundingBox(this.option);
+	}
 
-		function gunPath(ctx) {
-			ctx.beginPath();
-			ctx.rect(0, -gun.Width / 2, gun.Length, gun.Width);
-			ctx.closePath();
-			ctx.fill();
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.arc(0, 0, gun.TurretRadius, 0, (Math.PI * 2), false);
-			ctx.closePath();
-			ctx.fill();
-			ctx.stroke();
-		}
-
+	public draw(ctx) {
 		ctx.save();
 		ctx.translate(this.position.x, this.position.y);
 		ctx.rotate(this.rotation);
@@ -106,7 +98,10 @@ export default class Tank {
 		ctx.lineWidth = this.lineWidth;
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
+
 		ctx.fillStyle = this.color;
+
+
 		if (this.isColliding) {
 			ctx.strokeStyle = "#c40000";
 			this.isColliding = false;
@@ -118,12 +113,12 @@ export default class Tank {
 
 		ctx.save();
 		ctx.rotate(this.positionRotation);
-		tankPath(ctx);
+		this.tankPath(ctx);
 		ctx.restore();
 
 		ctx.save();
 		ctx.rotate(this.targetRotation);
-		gunPath(ctx);
+		this.gunPath(ctx);
 		ctx.restore();
 
 		ctx.restore();
@@ -203,11 +198,39 @@ export default class Tank {
 	}
 
 	public toString() {
-		return "position x:" + this.position.x.toFixed(2) + ", y:" + this.position.y.toFixed(2) + "\n" +
-			"pull x:" + this.pull.x.toFixed(2) + ", y:" + this.pull.y.toFixed(2) + "\n" +
-			"direction x:" + this.direction.x.toFixed(2) + ", y:" + this.direction.y.toFixed(2) + "\n" +
-			"targetRotation " + this.targetRotation.toFixed(2) + "\n" +
-			"positionRotation " + this.positionRotation.toFixed(2) + "\n" +
-			"rotation: " + this.rotation.toFixed(2) + "\n";
+		return "position: " + this.position.toString() + "\n" +
+			"pull: " + this.pull.toString() + "\n" +
+			"direction: " + this.direction.toString() + "\n" +
+			"targetRotation: " + this.targetRotation.toFixed(2) + "\n" +
+			"positionRotation: " + this.positionRotation.toFixed(2) + "\n" +
+			"rotation: " + this.rotation.toFixed(2) + "\n" +
+			"BoundingBox: " + this.boundingBox.bound.min.toString() + "\n" +
+			"option.lowerBound: " + this.option.lowerBound.toString() + "\n" +
+			"option.upperBound: " + this.option.upperBound.toString() + "\n";
+	}
+
+	private tankPath(ctx) {
+		ctx.beginPath();
+		ctx.rect(-this.object.tank.length / 2, -this.object.tank.width / 2, this.object.tank.length, this.object.tank.width);
+		ctx.moveTo(this.object.tank.length / 2, 0);
+		ctx.lineTo(-this.object.tank.length / 2, this.object.tank.width / 2);
+		ctx.lineTo(-this.object.tank.length / 2, -this.object.tank.width / 2);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	private gunPath(ctx) {
+		ctx.beginPath();
+		ctx.rect(0, -this.object.gun.width / 2, this.object.gun.length, this.object.gun.width);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.arc(0, 0, this.object.gun.turretRadius, 0, (Math.PI * 2), false);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
 	}
 }

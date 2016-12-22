@@ -48,10 +48,11 @@
 	var vector2d_1 = __webpack_require__(1);
 	var utils_1 = __webpack_require__(2);
 	var tank_1 = __webpack_require__(3);
-	var box_1 = __webpack_require__(4);
-	var camera_1 = __webpack_require__(5);
-	var quad_tree_1 = __webpack_require__(6);
-	var rectangle_1 = __webpack_require__(9);
+	var box_1 = __webpack_require__(6);
+	var camera_1 = __webpack_require__(7);
+	var quad_tree_1 = __webpack_require__(8);
+	var rectangle_1 = __webpack_require__(11);
+	var AABB_1 = __webpack_require__(4);
 	var canvas = document.getElementById("canvas");
 	var context = canvas.getContext("2d");
 	var mouse = utils_1.default.captureMouse(canvas);
@@ -85,6 +86,71 @@
 	    var len = node.nodes.length;
 	    for (var i = 0; i < len; i++) {
 	        drawNode(node.nodes[i], ctx);
+	    }
+	}
+	function quadTreeBoundingBox(tanks, tree) {
+	    tree.clear();
+	    tree.insert(tanks);
+	    for (var _i = 0, tanks_1 = tanks; _i < tanks_1.length; _i++) {
+	        var tank = tanks_1[_i];
+	        var items = tree.retrieve(tank);
+	        for (var _a = 0, items_1 = items; _a < items_1.length; _a++) {
+	            var item = items_1[_a];
+	            if (tank === item) {
+	                continue;
+	            }
+	            if (tank.isColliding && item.isColliding) {
+	                continue;
+	            }
+	            if (AABB_1.default.overlaps(tank.boundingBox, item.boundingBox)) {
+	                tank.isColliding = true;
+	                item.isColliding = true;
+	            }
+	        }
+	    }
+	}
+	function quadTree(tanks, tree) {
+	    tree.clear();
+	    tree.insert(tanks);
+	    for (var _i = 0, tanks_2 = tanks; _i < tanks_2.length; _i++) {
+	        var tank = tanks_2[_i];
+	        var items = tree.retrieve(tank);
+	        for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
+	            var item = items_2[_a];
+	            if (tank === item) {
+	                continue;
+	            }
+	            if (tank.isColliding && item.isColliding) {
+	                continue;
+	            }
+	            var d = tank.position.sub(item.position);
+	            var radii = tank.radius + item.radius;
+	            var colliding = d.magSq() < (radii * radii);
+	            if (!tank.isColliding) {
+	                tank.isColliding = colliding;
+	            }
+	            if (!item.isColliding) {
+	                item.isColliding = colliding;
+	            }
+	        }
+	    }
+	}
+	function bruteForce(tanks) {
+	    for (var _i = 0, tanks_3 = tanks; _i < tanks_3.length; _i++) {
+	        var tank = tanks_3[_i];
+	        for (var _a = 0, tanks_4 = tanks; _a < tanks_4.length; _a++) {
+	            var item = tanks_4[_a];
+	            if (tank === item) {
+	                continue;
+	            }
+	            if (tank.isColliding && item.isColliding) {
+	                continue;
+	            }
+	            if (AABB_1.default.overlaps(tank.boundingBox, item.boundingBox)) {
+	                tank.isColliding = true;
+	                item.isColliding = true;
+	            }
+	        }
 	    }
 	}
 	var camTarget = new vector2d_1.default(canvas.width / 2, canvas.height / 2);
@@ -124,36 +190,15 @@
 	    context.fillRect(-565, 300, 100, 100);
 	    context.fillRect(123, -215, 100, 100);
 	    context.fillRect(-133, 132, 100, 100);
-	    for (var _i = 0, tanks_1 = tanks; _i < tanks_1.length; _i++) {
-	        var tank = tanks_1[_i];
+	    for (var _i = 0, tanks_5 = tanks; _i < tanks_5.length; _i++) {
+	        var tank = tanks_5[_i];
+	        tank.update();
 	        tank.draw(context);
+	        tank.boundingBox.draw(context);
 	    }
 	    tanks[player].drawHelp(context);
 	    box.draw(context);
-	    tree.clear();
-	    tree.insert(tanks);
-	    for (var _a = 0, tanks_2 = tanks; _a < tanks_2.length; _a++) {
-	        var tank = tanks_2[_a];
-	        var items = tree.retrieve(tank);
-	        for (var _b = 0, items_1 = items; _b < items_1.length; _b++) {
-	            var item = items_1[_b];
-	            if (tank === item) {
-	                continue;
-	            }
-	            if (tank.isColliding && item.isColliding) {
-	                continue;
-	            }
-	            var d = tank.position.sub(item.position);
-	            var radii = tank.radius + item.radius;
-	            var colliding = d.magSq() < (radii * radii);
-	            if (!tank.isColliding) {
-	                tank.isColliding = colliding;
-	            }
-	            if (!item.isColliding) {
-	                item.isColliding = colliding;
-	            }
-	        }
-	    }
+	    bruteForce(tanks);
 	    drawNode(tree.root, context);
 	    context.restore();
 	    log.value = null;
@@ -180,6 +225,9 @@
 	    };
 	    Vector2d.angleTo = function (vec1, vec2) {
 	        return Math.atan2((vec1.y - vec2.y), (vec1.x - vec2.x));
+	    };
+	    Vector2d.clone = function (vec) {
+	        return new Vector2d(vec.x, vec.y);
 	    };
 	    Vector2d.prototype.set = function (xOrVec, y) {
 	        if (typeof xOrVec === "object") {
@@ -269,7 +317,7 @@
 	            this.x.toFixed(2) +
 	            ", y:" +
 	            this.y.toFixed(2) +
-	            "\n";
+	            " ";
 	    };
 	    return Vector2d;
 	}());
@@ -558,6 +606,7 @@
 	"use strict";
 	var utils_1 = __webpack_require__(2);
 	var vector2d_1 = __webpack_require__(1);
+	var AABB_1 = __webpack_require__(4);
 	var Tank = (function () {
 	    function Tank(x, y) {
 	        this.position = new vector2d_1.default();
@@ -576,6 +625,22 @@
 	        this.height = 5;
 	        this.radius = 20;
 	        this.isColliding = false;
+	        this.isCollidingboundingBox = false;
+	        this.option = {
+	            lowerBound: this.position,
+	            upperBound: this.position.add(new vector2d_1.default(5, 5)),
+	        };
+	        this.object = {
+	            gun: {
+	                length: 30,
+	                width: 10,
+	                turretRadius: 10,
+	            },
+	            tank: {
+	                length: 40,
+	                width: 30,
+	            },
+	        };
 	        this.pull = new vector2d_1.default(x, y) || new vector2d_1.default();
 	    }
 	    Tank.prototype.player = function (keyboard, mouse, camera) {
@@ -600,41 +665,14 @@
 	        this.direction = this.direction.normalize();
 	        this.pull = this.pull.add(this.direction.mult(speed));
 	    };
-	    Tank.prototype.draw = function (ctx) {
-	        var gun = {
-	            Length: 30,
-	            Width: 10,
-	            TurretRadius: 10
-	        };
-	        var tank = {
-	            Length: 40,
-	            Width: 30
-	        };
+	    Tank.prototype.update = function () {
 	        this.positionRotation = vector2d_1.default.angleTo(this.pull, this.position);
 	        this.position.x = this.pull.x - Math.cos(this.positionRotation) * 18;
 	        this.position.y = this.pull.y - Math.sin(this.positionRotation) * 18;
-	        function tankPath(ctx) {
-	            ctx.beginPath();
-	            ctx.rect(-tank.Length / 2, -tank.Width / 2, tank.Length, tank.Width);
-	            ctx.moveTo(tank.Length / 2, 0);
-	            ctx.lineTo(-tank.Length / 2, tank.Width / 2);
-	            ctx.lineTo(-tank.Length / 2, -tank.Width / 2);
-	            ctx.closePath();
-	            ctx.fill();
-	            ctx.stroke();
-	        }
-	        function gunPath(ctx) {
-	            ctx.beginPath();
-	            ctx.rect(0, -gun.Width / 2, gun.Length, gun.Width);
-	            ctx.closePath();
-	            ctx.fill();
-	            ctx.stroke();
-	            ctx.beginPath();
-	            ctx.arc(0, 0, gun.TurretRadius, 0, (Math.PI * 2), false);
-	            ctx.closePath();
-	            ctx.fill();
-	            ctx.stroke();
-	        }
+	        this.option.upperBound = this.position.add(new vector2d_1.default(50, 50));
+	        this.boundingBox = new AABB_1.default(this.option);
+	    };
+	    Tank.prototype.draw = function (ctx) {
 	        ctx.save();
 	        ctx.translate(this.position.x, this.position.y);
 	        ctx.rotate(this.rotation);
@@ -653,11 +691,11 @@
 	        ctx.globalAlpha = this.transparency;
 	        ctx.save();
 	        ctx.rotate(this.positionRotation);
-	        tankPath(ctx);
+	        this.tankPath(ctx);
 	        ctx.restore();
 	        ctx.save();
 	        ctx.rotate(this.targetRotation);
-	        gunPath(ctx);
+	        this.gunPath(ctx);
 	        ctx.restore();
 	        ctx.restore();
 	    };
@@ -731,12 +769,37 @@
 	        ctx.restore();
 	    };
 	    Tank.prototype.toString = function () {
-	        return "position x:" + this.position.x.toFixed(2) + ", y:" + this.position.y.toFixed(2) + "\n" +
-	            "pull x:" + this.pull.x.toFixed(2) + ", y:" + this.pull.y.toFixed(2) + "\n" +
-	            "direction x:" + this.direction.x.toFixed(2) + ", y:" + this.direction.y.toFixed(2) + "\n" +
-	            "targetRotation " + this.targetRotation.toFixed(2) + "\n" +
-	            "positionRotation " + this.positionRotation.toFixed(2) + "\n" +
-	            "rotation: " + this.rotation.toFixed(2) + "\n";
+	        return "position: " + this.position.toString() + "\n" +
+	            "pull: " + this.pull.toString() + "\n" +
+	            "direction: " + this.direction.toString() + "\n" +
+	            "targetRotation: " + this.targetRotation.toFixed(2) + "\n" +
+	            "positionRotation: " + this.positionRotation.toFixed(2) + "\n" +
+	            "rotation: " + this.rotation.toFixed(2) + "\n" +
+	            "BoundingBox: " + this.boundingBox.bound.min.toString() + "\n" +
+	            "option.lowerBound: " + this.option.lowerBound.toString() + "\n" +
+	            "option.upperBound: " + this.option.upperBound.toString() + "\n";
+	    };
+	    Tank.prototype.tankPath = function (ctx) {
+	        ctx.beginPath();
+	        ctx.rect(-this.object.tank.length / 2, -this.object.tank.width / 2, this.object.tank.length, this.object.tank.width);
+	        ctx.moveTo(this.object.tank.length / 2, 0);
+	        ctx.lineTo(-this.object.tank.length / 2, this.object.tank.width / 2);
+	        ctx.lineTo(-this.object.tank.length / 2, -this.object.tank.width / 2);
+	        ctx.closePath();
+	        ctx.fill();
+	        ctx.stroke();
+	    };
+	    Tank.prototype.gunPath = function (ctx) {
+	        ctx.beginPath();
+	        ctx.rect(0, -this.object.gun.width / 2, this.object.gun.length, this.object.gun.width);
+	        ctx.closePath();
+	        ctx.fill();
+	        ctx.stroke();
+	        ctx.beginPath();
+	        ctx.arc(0, 0, this.object.gun.turretRadius, 0, (Math.PI * 2), false);
+	        ctx.closePath();
+	        ctx.fill();
+	        ctx.stroke();
 	    };
 	    return Tank;
 	}());
@@ -746,6 +809,206 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var vector2d_new_1 = __webpack_require__(5);
+	var BoundingBox = (function () {
+	    function BoundingBox(options) {
+	        this.bound = {
+	            max: null,
+	            min: null,
+	        };
+	        options = options || {};
+	        this.bound.min = options.lowerBound ? vector2d_new_1.default.clone(options.lowerBound) : new vector2d_new_1.default();
+	        this.bound.max = options.upperBound ? vector2d_new_1.default.clone(options.upperBound) : new vector2d_new_1.default();
+	    }
+	    BoundingBox.overlaps = function (boxA, boxB) {
+	        return (vector2d_new_1.default.isLessOrEqual(boxA.bound.min, boxB.bound.max) &&
+	            vector2d_new_1.default.isLessOrEqual(boxB.bound.min, boxA.bound.max));
+	    };
+	    BoundingBox.prototype.extend = function (box) {
+	        var max = this.bound.max;
+	        var min = this.bound.min;
+	        if (vector2d_new_1.default.isGreater(max, box.bound.max)) {
+	            max = box.bound.max;
+	        }
+	        if (vector2d_new_1.default.isLess(min, box.bound.min)) {
+	            min = box.bound.min;
+	        }
+	    };
+	    BoundingBox.prototype.draw = function (context) {
+	        context.save();
+	        context.translate(this.bound.min.getX(), this.bound.min.getY());
+	        context.beginPath();
+	        context.rect(0, 0, this.bound.max.getX() - this.bound.min.getX(), this.bound.max.getY() - this.bound.min.getY());
+	        context.stroke();
+	        context.restore();
+	    };
+	    return BoundingBox;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = BoundingBox;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Vector2d = (function () {
+	    function Vector2d(x, y) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	    }
+	    Vector2d.fromAngle = function (angle) {
+	        return new Vector2d(Math.cos(angle), Math.sin(angle));
+	    };
+	    Vector2d.angleTo = function (vector1, vector2) {
+	        return Math.atan2((vector1.y - vector2.y), (vector1.x - vector2.x));
+	    };
+	    Vector2d.clone = function (vector) {
+	        return new Vector2d(vector.x, vector.y);
+	    };
+	    Vector2d.magnitude = function (vector) {
+	        return (Math.sqrt((vector.getX() * vector.getX()) +
+	            (vector.getY() * vector.getY())));
+	    };
+	    Vector2d.magnitudeSquared = function (vector) {
+	        return ((vector.getX() * vector.getX()) +
+	            (vector.getY() * vector.getY()));
+	    };
+	    Vector2d.rotate = function (vector, angle) {
+	        return new Vector2d((vector.getX() * Math.cos(angle)) - (vector.getY() * Math.sin(angle)), (vector.getX() * Math.sin(angle)) + (vector.getY() * Math.cos(angle)));
+	    };
+	    Vector2d.isLessOrEqual = function (vectorA, vectorB) {
+	        return ((vectorA.getX() <= vectorB.getX()) &&
+	            (vectorA.getY() <= vectorB.getY()));
+	    };
+	    Vector2d.isGreaterOrEqual = function (vectorA, vectorB) {
+	        return ((vectorA.getX() >= vectorB.getX()) &&
+	            (vectorA.getY() >= vectorB.getY()));
+	    };
+	    Vector2d.isLess = function (vectorA, vectorB) {
+	        return ((vectorA.getX() < vectorB.getX()) &&
+	            (vectorA.getY() < vectorB.getY()));
+	    };
+	    Vector2d.isGreater = function (vectorA, vectorB) {
+	        return ((vectorA.getX() > vectorB.getX()) &&
+	            (vectorA.getY() > vectorB.getY()));
+	    };
+	    Vector2d.prototype.set = function (xOrVec, y) {
+	        if (typeof xOrVec === "object") {
+	            this.x = xOrVec.x;
+	            this.y = xOrVec.y;
+	        }
+	        else if (typeof xOrVec === "number" && typeof y === "number") {
+	            this.x = xOrVec;
+	            this.y = y;
+	        }
+	        return this;
+	    };
+	    Vector2d.prototype.setZero = function () {
+	        this.x = 0;
+	        this.y = 0;
+	        return this;
+	    };
+	    Vector2d.prototype.setX = function (x) {
+	        this.x = x;
+	        return this;
+	    };
+	    Vector2d.prototype.setY = function (y) {
+	        this.y = y;
+	        return this;
+	    };
+	    Vector2d.prototype.getX = function () {
+	        return this.x;
+	    };
+	    Vector2d.prototype.getY = function () {
+	        return this.y;
+	    };
+	    Vector2d.prototype.copy = function () {
+	        return new Vector2d(this.x, this.y);
+	    };
+	    Vector2d.prototype.mag = function () {
+	        return (Math.sqrt((this.x * this.x) +
+	            (this.y * this.y)));
+	    };
+	    Vector2d.prototype.magSq = function () {
+	        return ((this.x * this.x) + (this.y * this.y));
+	    };
+	    Vector2d.prototype.add = function (vec) {
+	        return new Vector2d((this.x + vec.x), (this.y + vec.y));
+	    };
+	    Vector2d.prototype.sub = function (vec) {
+	        return new Vector2d((this.x - vec.x), (this.y - vec.y));
+	    };
+	    Vector2d.prototype.mult = function (scalar) {
+	        return new Vector2d((this.x * scalar), (this.y * scalar));
+	    };
+	    Vector2d.prototype.div = function (scalar) {
+	        return new Vector2d((this.x / scalar), (this.y / scalar));
+	    };
+	    Vector2d.prototype.dist = function (vec) {
+	        return Math.sqrt(Math.pow(this.x - vec.x, 2) +
+	            Math.pow(this.y - vec.y, 2));
+	    };
+	    Vector2d.prototype.dot = function (vec) {
+	        return (this.x * vec.x) + (this.y * vec.y);
+	    };
+	    Vector2d.prototype.normalize = function () {
+	        return this.div(this.mag());
+	    };
+	    Vector2d.prototype.limit = function (scalar) {
+	        if (this.magSq() > scalar * scalar) {
+	            this.normalize().mult(scalar);
+	        }
+	        return this;
+	    };
+	    Vector2d.prototype.setMag = function (scalar) {
+	        return this.normalize().mult(scalar);
+	    };
+	    Vector2d.prototype.heading = function () {
+	        return Math.atan2(this.y, this.x);
+	    };
+	    Vector2d.prototype.rotate = function (angle) {
+	        return new Vector2d((this.x * Math.cos(angle)) - (this.y * Math.sin(angle)), (this.x * Math.sin(angle)) + (this.y * Math.cos(angle)));
+	    };
+	    Vector2d.prototype.lerp = function (vec, amount) {
+	        if (amount > 1) {
+	            amount = 1;
+	        }
+	        if (amount < 0) {
+	            amount = 0;
+	        }
+	        return this.mult(amount).add(vec.copy().mult(1 - amount));
+	    };
+	    Vector2d.prototype.invert = function () {
+	        var x = this.x * -1;
+	        var y = this.y * -1;
+	        return new Vector2d(x, y);
+	    };
+	    Vector2d.prototype.positioning = function (camera) {
+	        return this.invert().rotate(camera.rotation).mult(camera.zoom).add(camera.focus);
+	    };
+	    Vector2d.prototype.toArray = function () {
+	        return [this.x, this.y];
+	    };
+	    Vector2d.prototype.toString = function () {
+	        return "x:" +
+	            this.x.toFixed(2) +
+	            ", y:" +
+	            this.y.toFixed(2) +
+	            "\n";
+	    };
+	    return Vector2d;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Vector2d;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -784,7 +1047,7 @@
 
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -839,12 +1102,12 @@
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var node_1 = __webpack_require__(7);
-	var bounds_node_1 = __webpack_require__(8);
+	var node_1 = __webpack_require__(9);
+	var bounds_node_1 = __webpack_require__(10);
 	var QuadTree = (function () {
 	    function QuadTree(bounds, pointQuad, maxDepth, maxChildren) {
 	        this.root = null;
@@ -882,7 +1145,7 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -994,7 +1257,7 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1003,7 +1266,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var node_1 = __webpack_require__(7);
+	var node_1 = __webpack_require__(9);
 	var BoundsNode = (function (_super) {
 	    __extends(BoundsNode, _super);
 	    function BoundsNode(bounds, depth, maxChildren, maxDepth) {
@@ -1107,7 +1370,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
