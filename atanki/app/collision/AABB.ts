@@ -1,4 +1,4 @@
-import Vector2d from "../math/vector2d-new";
+import Vector2d from "../math/vector2d";
 
 // Axis Aligned Bounding Box
 export default class BoundingBox {
@@ -37,6 +37,8 @@ export default class BoundingBox {
 		context.translate(this.bound.min.getX(), this.bound.min.getY());
 		context.beginPath();
 		context.rect(0, 0, this.bound.max.getX() - this.bound.min.getX(), this.bound.max.getY() - this.bound.min.getY());
+		context.lineWidth = 0.5;
+		context.strokeStyle = "#00ff00";
 		context.stroke();
 		context.restore();
 	}

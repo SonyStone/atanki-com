@@ -1,14 +1,12 @@
 export default class Vector2d {
 
 	/**
-	 * fromAngle
 	 * Return new vector, from an angle
 	 */
 	public static fromAngle(angle) {
 		return new Vector2d(Math.cos(angle), Math.sin(angle));
 	}
 	/**
-	 * angleTo
 	 * Return new vector, to angle, maybe?
 	 */
 	public static angleTo(vec1: any, vec2: any) {
@@ -16,11 +14,73 @@ export default class Vector2d {
 	}
 
 	/**
-	 * angleTo
 	 * Return new vector, to angle, maybe?
 	 */
 	public static clone(vec)  {
 		return new Vector2d(vec.x, vec.y);
+	}
+
+	/**
+	 * Returns the magnitude (length) of a vector.
+	 */
+	public static magnitude(vector: Vector2d): number {
+		return (Math.sqrt(
+			(vector.getX() * vector.getX()) +
+			(vector.getY() * vector.getY()),
+		));
+	}
+
+	/**
+	 * Returns the magnitude (length) of a vector (therefore saving a `sqrt` operation).
+	 */
+	public static magnitudeSquared(vector: Vector2d): number {
+		return (
+			(vector.getX() * vector.getX()) +
+			(vector.getY() * vector.getY())
+		);
+	}
+
+	public static rotate(vector: Vector2d, angle: number): Vector2d {
+		return new Vector2d(
+			(vector.getX() * Math.cos(angle)) - (vector.getY() * Math.sin(angle)),
+			(vector.getX() * Math.sin(angle)) + (vector.getY() * Math.cos(angle)),
+		);
+	}
+
+	public static rotateAbout(vectorA, angle, vectorB): Vector2d {
+		let cos = Math.cos(angle);
+		let sin = Math.sin(angle);
+		let x = vectorB.x + ((vectorA.x - vectorB.x) * cos - (vectorA.y - vectorB.y) * sin);
+		let y = vectorB.y + ((vectorA.x - vectorB.x) * sin + (vectorA.y - vectorB.y) * cos);
+		return new Vector2d(x, y);
+	}
+
+	public static isLessOrEqual(vectorA: Vector2d, vectorB: Vector2d) {
+		return (
+			(vectorA.getX() <= vectorB.getX()) &&
+			(vectorA.getY() <= vectorB.getY())
+		);
+	}
+
+	public static isGreaterOrEqual(vectorA: Vector2d, vectorB: Vector2d) {
+		return (
+			(vectorA.getX() >= vectorB.getX()) &&
+			(vectorA.getY() >= vectorB.getY())
+		);
+	}
+
+	public static isLess(vectorA: Vector2d, vectorB: Vector2d) {
+		return (
+			(vectorA.getX() < vectorB.getX()) &&
+			(vectorA.getY() < vectorB.getY())
+		);
+	}
+
+	public static isGreater(vectorA: Vector2d, vectorB: Vector2d) {
+		return (
+			(vectorA.getX() > vectorB.getX()) &&
+			(vectorA.getY() > vectorB.getY())
+		);
 	}
 
 	public x: number;
@@ -32,7 +92,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .set()
 	 * Modifies, return set the components of the vector
 	 * with black magic
 	 */
@@ -51,7 +110,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .setZero()
 	 * Modifies, return vector with zero coordinates
 	 */
 	public setZero(): Vector2d {
@@ -60,8 +118,25 @@ export default class Vector2d {
 		return this;
 	}
 
+	public setX(x: number): Vector2d {
+		this.x = x;
+		return this;
+	}
+
+	public setY(y: number): Vector2d {
+		this.y = y;
+		return this;
+	}
+
+	public getX(): number {
+		return this.x;
+	}
+
+	public getY(): number {
+		return this.y;
+	}
+
 	/**
-	 * .copy()
 	 * Return new vector, copy of the vector
 	 */
 	public copy(): Vector2d {
@@ -69,7 +144,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .mag()
 	 * Return scalar, the magnitude of the vector
 	 */
 	public mag(): number {
@@ -80,7 +154,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .magSq()
 	 * Return scalar, the magnitude of the vector, squared
 	 */
 	public magSq(): number {
@@ -88,7 +161,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .add(vec)
 	 * Modifies, return adds one vector to another
 	 */
 	public add(vec: Vector2d): Vector2d {
@@ -99,7 +171,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .sub(vec)
 	 * Modifies, return subs one vector from another
 	 */
 	public sub(vec: Vector2d): Vector2d {
@@ -110,7 +181,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .mult()
 	 * Modifies, return multiplies a vector by a scalar
 	 */
 	public mult(scalar: number): Vector2d {
@@ -121,7 +191,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .div()
 	 * Modifies, return divide a vector by a scalar
 	 */
 	public div(scalar: number): Vector2d {
@@ -132,7 +201,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .dist()
 	 * Return scalar, the distance between two points
 	 */
 	public dist(vec: Vector2d): number {
@@ -143,7 +211,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .dot()
 	 * Return scalar, the dot product of two vectors
 	 */
 	public dot(vec: Vector2d): number {
@@ -151,7 +218,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .normalize()
 	 * Modifies, return normalize the vector to a length of 1
 	 */
 	public normalize(): Vector2d {
@@ -159,7 +225,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .limit()
 	 * Modifies, return limit the magnitude of the vector
 	 */
 	public limit(scalar: number): Vector2d {
@@ -170,7 +235,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .setMag()
 	 * Modifies, return set the magnitude of the vector
 	 */
 	public setMag(scalar: number): Vector2d {
@@ -178,7 +242,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .heading()
 	 * Return angle of rotation for this vector
 	 */
 	public heading():number {
@@ -186,7 +249,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .rotate()
 	 * Modifies, return rotate the vector by an angle
 	 */
 	public rotate(angle: number): Vector2d {
@@ -197,7 +259,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * .lerp()
 	 * Modifies, return linear interpolate the vector to another vector
 	 */
 	public lerp(vec: Vector2d, amount: number): Vector2d {
@@ -207,7 +268,6 @@ export default class Vector2d {
 	}
 
 	/**
-	 * invert()
 	 * Modifies, return inverted vector direction
 	 */
 	public invert(): Vector2d {

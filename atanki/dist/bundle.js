@@ -48,10 +48,10 @@
 	var vector2d_1 = __webpack_require__(1);
 	var utils_1 = __webpack_require__(2);
 	var tank_1 = __webpack_require__(3);
-	var box_1 = __webpack_require__(6);
-	var camera_1 = __webpack_require__(7);
-	var quad_tree_1 = __webpack_require__(8);
-	var rectangle_1 = __webpack_require__(11);
+	var box_1 = __webpack_require__(5);
+	var camera_1 = __webpack_require__(6);
+	var quad_tree_1 = __webpack_require__(7);
+	var rectangle_1 = __webpack_require__(10);
 	var AABB_1 = __webpack_require__(4);
 	var canvas = document.getElementById("canvas");
 	var context = canvas.getContext("2d");
@@ -193,12 +193,13 @@
 	    for (var _i = 0, tanks_5 = tanks; _i < tanks_5.length; _i++) {
 	        var tank = tanks_5[_i];
 	        tank.update();
+	        tank.updateBoundingBox();
 	        tank.draw(context);
 	        tank.boundingBox.draw(context);
 	    }
 	    tanks[player].drawHelp(context);
 	    box.draw(context);
-	    bruteForce(tanks);
+	    quadTreeBoundingBox(tanks, tree);
 	    drawNode(tree.root, context);
 	    context.restore();
 	    log.value = null;
@@ -229,6 +230,40 @@
 	    Vector2d.clone = function (vec) {
 	        return new Vector2d(vec.x, vec.y);
 	    };
+	    Vector2d.magnitude = function (vector) {
+	        return (Math.sqrt((vector.getX() * vector.getX()) +
+	            (vector.getY() * vector.getY())));
+	    };
+	    Vector2d.magnitudeSquared = function (vector) {
+	        return ((vector.getX() * vector.getX()) +
+	            (vector.getY() * vector.getY()));
+	    };
+	    Vector2d.rotate = function (vector, angle) {
+	        return new Vector2d((vector.getX() * Math.cos(angle)) - (vector.getY() * Math.sin(angle)), (vector.getX() * Math.sin(angle)) + (vector.getY() * Math.cos(angle)));
+	    };
+	    Vector2d.rotateAbout = function (vectorA, angle, vectorB) {
+	        var cos = Math.cos(angle);
+	        var sin = Math.sin(angle);
+	        var x = vectorB.x + ((vectorA.x - vectorB.x) * cos - (vectorA.y - vectorB.y) * sin);
+	        var y = vectorB.y + ((vectorA.x - vectorB.x) * sin + (vectorA.y - vectorB.y) * cos);
+	        return new Vector2d(x, y);
+	    };
+	    Vector2d.isLessOrEqual = function (vectorA, vectorB) {
+	        return ((vectorA.getX() <= vectorB.getX()) &&
+	            (vectorA.getY() <= vectorB.getY()));
+	    };
+	    Vector2d.isGreaterOrEqual = function (vectorA, vectorB) {
+	        return ((vectorA.getX() >= vectorB.getX()) &&
+	            (vectorA.getY() >= vectorB.getY()));
+	    };
+	    Vector2d.isLess = function (vectorA, vectorB) {
+	        return ((vectorA.getX() < vectorB.getX()) &&
+	            (vectorA.getY() < vectorB.getY()));
+	    };
+	    Vector2d.isGreater = function (vectorA, vectorB) {
+	        return ((vectorA.getX() > vectorB.getX()) &&
+	            (vectorA.getY() > vectorB.getY()));
+	    };
 	    Vector2d.prototype.set = function (xOrVec, y) {
 	        if (typeof xOrVec === "object") {
 	            this.x = xOrVec.x;
@@ -244,6 +279,20 @@
 	        this.x = 0;
 	        this.y = 0;
 	        return this;
+	    };
+	    Vector2d.prototype.setX = function (x) {
+	        this.x = x;
+	        return this;
+	    };
+	    Vector2d.prototype.setY = function (y) {
+	        this.y = y;
+	        return this;
+	    };
+	    Vector2d.prototype.getX = function () {
+	        return this.x;
+	    };
+	    Vector2d.prototype.getY = function () {
+	        return this.y;
 	    };
 	    Vector2d.prototype.copy = function () {
 	        return new Vector2d(this.x, this.y);
@@ -627,8 +676,8 @@
 	        this.isColliding = false;
 	        this.isCollidingboundingBox = false;
 	        this.option = {
-	            lowerBound: this.position,
-	            upperBound: this.position.add(new vector2d_1.default(5, 5)),
+	            lowerBound: null,
+	            upperBound: null,
 	        };
 	        this.object = {
 	            gun: {
@@ -640,6 +689,13 @@
 	                length: 40,
 	                width: 30,
 	            },
+	            tank2: [
+	                new vector2d_1.default(-20, -15),
+	                new vector2d_1.default(20, -15),
+	                new vector2d_1.default(20, 15),
+	                new vector2d_1.default(-20, 15),
+	                new vector2d_1.default(20, 0),
+	            ]
 	        };
 	        this.pull = new vector2d_1.default(x, y) || new vector2d_1.default();
 	    }
@@ -669,7 +725,33 @@
 	        this.positionRotation = vector2d_1.default.angleTo(this.pull, this.position);
 	        this.position.x = this.pull.x - Math.cos(this.positionRotation) * 18;
 	        this.position.y = this.pull.y - Math.sin(this.positionRotation) * 18;
-	        this.option.upperBound = this.position.add(new vector2d_1.default(50, 50));
+	    };
+	    Tank.prototype.updateBoundingBox = function () {
+	        var tankRotated = [];
+	        for (var _i = 0, _a = this.object.tank2; _i < _a.length; _i++) {
+	            var point = _a[_i];
+	            tankRotated.push(vector2d_1.default.rotateAbout(vector2d_1.default.clone(this.position).add(point), this.positionRotation, this.position));
+	        }
+	        var min = vector2d_1.default.clone(this.position);
+	        var max = vector2d_1.default.clone(this.position);
+	        for (var _b = 0, tankRotated_1 = tankRotated; _b < tankRotated_1.length; _b++) {
+	            var point = tankRotated_1[_b];
+	            if (point.getX() < min.getX()) {
+	                min.setX(point.getX());
+	            }
+	            if (point.getY() < min.getY()) {
+	                min.setY(point.getY());
+	            }
+	            if (point.getX() > max.getX()) {
+	                max.setX(point.getX());
+	            }
+	            if (point.getY() > max.getY()) {
+	                max.setY(point.getY());
+	            }
+	        }
+	        this.tankRotated = tankRotated;
+	        this.option.lowerBound = min;
+	        this.option.upperBound = max;
 	        this.boundingBox = new AABB_1.default(this.option);
 	    };
 	    Tank.prototype.draw = function (ctx) {
@@ -691,7 +773,7 @@
 	        ctx.globalAlpha = this.transparency;
 	        ctx.save();
 	        ctx.rotate(this.positionRotation);
-	        this.tankPath(ctx);
+	        this.tank2Path(ctx);
 	        ctx.restore();
 	        ctx.save();
 	        ctx.rotate(this.targetRotation);
@@ -706,6 +788,9 @@
 	        ctx.moveTo(0, 0);
 	        ctx.fillStyle = "#ff0000";
 	        ctx.strokeStyle = "#00ff00";
+	        ctx.lineWidth = 0.5;
+	        ctx.lineJoin = "round";
+	        ctx.lineCap = "round";
 	        ctx.scale(scale, scale);
 	        function pointDraw(rotation, positionX, positionY) {
 	            if (rotation === undefined) {
@@ -777,7 +862,13 @@
 	            "rotation: " + this.rotation.toFixed(2) + "\n" +
 	            "BoundingBox: " + this.boundingBox.bound.min.toString() + "\n" +
 	            "option.lowerBound: " + this.option.lowerBound.toString() + "\n" +
-	            "option.upperBound: " + this.option.upperBound.toString() + "\n";
+	            "option.upperBound: " + this.option.upperBound.toString() + "\n" +
+	            "tankRotated: " + "\n" +
+	            this.tankRotated[0].toString() + "\n" +
+	            this.tankRotated[1].toString() + "\n" +
+	            this.tankRotated[2].toString() + "\n" +
+	            this.tankRotated[3].toString() + "\n" +
+	            this.tankRotated[4].toString() + "\n";
 	    };
 	    Tank.prototype.tankPath = function (ctx) {
 	        ctx.beginPath();
@@ -785,6 +876,21 @@
 	        ctx.moveTo(this.object.tank.length / 2, 0);
 	        ctx.lineTo(-this.object.tank.length / 2, this.object.tank.width / 2);
 	        ctx.lineTo(-this.object.tank.length / 2, -this.object.tank.width / 2);
+	        ctx.closePath();
+	        ctx.fill();
+	        ctx.stroke();
+	    };
+	    Tank.prototype.tank2Path = function (ctx) {
+	        var draw = this.object.tank2;
+	        ctx.beginPath();
+	        ctx.moveTo(draw[0].x, draw[0].y);
+	        ctx.lineTo(draw[1].x, draw[1].y);
+	        ctx.lineTo(draw[2].x, draw[2].y);
+	        ctx.lineTo(draw[3].x, draw[3].y);
+	        ctx.closePath();
+	        ctx.moveTo(draw[4].x, 0);
+	        ctx.lineTo(draw[3].x, draw[3].y);
+	        ctx.lineTo(draw[0].x, draw[0].y);
 	        ctx.closePath();
 	        ctx.fill();
 	        ctx.stroke();
@@ -812,7 +918,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var vector2d_new_1 = __webpack_require__(5);
+	var vector2d_1 = __webpack_require__(1);
 	var BoundingBox = (function () {
 	    function BoundingBox(options) {
 	        this.bound = {
@@ -820,20 +926,20 @@
 	            min: null,
 	        };
 	        options = options || {};
-	        this.bound.min = options.lowerBound ? vector2d_new_1.default.clone(options.lowerBound) : new vector2d_new_1.default();
-	        this.bound.max = options.upperBound ? vector2d_new_1.default.clone(options.upperBound) : new vector2d_new_1.default();
+	        this.bound.min = options.lowerBound ? vector2d_1.default.clone(options.lowerBound) : new vector2d_1.default();
+	        this.bound.max = options.upperBound ? vector2d_1.default.clone(options.upperBound) : new vector2d_1.default();
 	    }
 	    BoundingBox.overlaps = function (boxA, boxB) {
-	        return (vector2d_new_1.default.isLessOrEqual(boxA.bound.min, boxB.bound.max) &&
-	            vector2d_new_1.default.isLessOrEqual(boxB.bound.min, boxA.bound.max));
+	        return (vector2d_1.default.isLessOrEqual(boxA.bound.min, boxB.bound.max) &&
+	            vector2d_1.default.isLessOrEqual(boxB.bound.min, boxA.bound.max));
 	    };
 	    BoundingBox.prototype.extend = function (box) {
 	        var max = this.bound.max;
 	        var min = this.bound.min;
-	        if (vector2d_new_1.default.isGreater(max, box.bound.max)) {
+	        if (vector2d_1.default.isGreater(max, box.bound.max)) {
 	            max = box.bound.max;
 	        }
-	        if (vector2d_new_1.default.isLess(min, box.bound.min)) {
+	        if (vector2d_1.default.isLess(min, box.bound.min)) {
 	            min = box.bound.min;
 	        }
 	    };
@@ -842,6 +948,8 @@
 	        context.translate(this.bound.min.getX(), this.bound.min.getY());
 	        context.beginPath();
 	        context.rect(0, 0, this.bound.max.getX() - this.bound.min.getX(), this.bound.max.getY() - this.bound.min.getY());
+	        context.lineWidth = 0.5;
+	        context.strokeStyle = "#00ff00";
 	        context.stroke();
 	        context.restore();
 	    };
@@ -853,162 +961,6 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	var Vector2d = (function () {
-	    function Vector2d(x, y) {
-	        this.x = x || 0;
-	        this.y = y || 0;
-	    }
-	    Vector2d.fromAngle = function (angle) {
-	        return new Vector2d(Math.cos(angle), Math.sin(angle));
-	    };
-	    Vector2d.angleTo = function (vector1, vector2) {
-	        return Math.atan2((vector1.y - vector2.y), (vector1.x - vector2.x));
-	    };
-	    Vector2d.clone = function (vector) {
-	        return new Vector2d(vector.x, vector.y);
-	    };
-	    Vector2d.magnitude = function (vector) {
-	        return (Math.sqrt((vector.getX() * vector.getX()) +
-	            (vector.getY() * vector.getY())));
-	    };
-	    Vector2d.magnitudeSquared = function (vector) {
-	        return ((vector.getX() * vector.getX()) +
-	            (vector.getY() * vector.getY()));
-	    };
-	    Vector2d.rotate = function (vector, angle) {
-	        return new Vector2d((vector.getX() * Math.cos(angle)) - (vector.getY() * Math.sin(angle)), (vector.getX() * Math.sin(angle)) + (vector.getY() * Math.cos(angle)));
-	    };
-	    Vector2d.isLessOrEqual = function (vectorA, vectorB) {
-	        return ((vectorA.getX() <= vectorB.getX()) &&
-	            (vectorA.getY() <= vectorB.getY()));
-	    };
-	    Vector2d.isGreaterOrEqual = function (vectorA, vectorB) {
-	        return ((vectorA.getX() >= vectorB.getX()) &&
-	            (vectorA.getY() >= vectorB.getY()));
-	    };
-	    Vector2d.isLess = function (vectorA, vectorB) {
-	        return ((vectorA.getX() < vectorB.getX()) &&
-	            (vectorA.getY() < vectorB.getY()));
-	    };
-	    Vector2d.isGreater = function (vectorA, vectorB) {
-	        return ((vectorA.getX() > vectorB.getX()) &&
-	            (vectorA.getY() > vectorB.getY()));
-	    };
-	    Vector2d.prototype.set = function (xOrVec, y) {
-	        if (typeof xOrVec === "object") {
-	            this.x = xOrVec.x;
-	            this.y = xOrVec.y;
-	        }
-	        else if (typeof xOrVec === "number" && typeof y === "number") {
-	            this.x = xOrVec;
-	            this.y = y;
-	        }
-	        return this;
-	    };
-	    Vector2d.prototype.setZero = function () {
-	        this.x = 0;
-	        this.y = 0;
-	        return this;
-	    };
-	    Vector2d.prototype.setX = function (x) {
-	        this.x = x;
-	        return this;
-	    };
-	    Vector2d.prototype.setY = function (y) {
-	        this.y = y;
-	        return this;
-	    };
-	    Vector2d.prototype.getX = function () {
-	        return this.x;
-	    };
-	    Vector2d.prototype.getY = function () {
-	        return this.y;
-	    };
-	    Vector2d.prototype.copy = function () {
-	        return new Vector2d(this.x, this.y);
-	    };
-	    Vector2d.prototype.mag = function () {
-	        return (Math.sqrt((this.x * this.x) +
-	            (this.y * this.y)));
-	    };
-	    Vector2d.prototype.magSq = function () {
-	        return ((this.x * this.x) + (this.y * this.y));
-	    };
-	    Vector2d.prototype.add = function (vec) {
-	        return new Vector2d((this.x + vec.x), (this.y + vec.y));
-	    };
-	    Vector2d.prototype.sub = function (vec) {
-	        return new Vector2d((this.x - vec.x), (this.y - vec.y));
-	    };
-	    Vector2d.prototype.mult = function (scalar) {
-	        return new Vector2d((this.x * scalar), (this.y * scalar));
-	    };
-	    Vector2d.prototype.div = function (scalar) {
-	        return new Vector2d((this.x / scalar), (this.y / scalar));
-	    };
-	    Vector2d.prototype.dist = function (vec) {
-	        return Math.sqrt(Math.pow(this.x - vec.x, 2) +
-	            Math.pow(this.y - vec.y, 2));
-	    };
-	    Vector2d.prototype.dot = function (vec) {
-	        return (this.x * vec.x) + (this.y * vec.y);
-	    };
-	    Vector2d.prototype.normalize = function () {
-	        return this.div(this.mag());
-	    };
-	    Vector2d.prototype.limit = function (scalar) {
-	        if (this.magSq() > scalar * scalar) {
-	            this.normalize().mult(scalar);
-	        }
-	        return this;
-	    };
-	    Vector2d.prototype.setMag = function (scalar) {
-	        return this.normalize().mult(scalar);
-	    };
-	    Vector2d.prototype.heading = function () {
-	        return Math.atan2(this.y, this.x);
-	    };
-	    Vector2d.prototype.rotate = function (angle) {
-	        return new Vector2d((this.x * Math.cos(angle)) - (this.y * Math.sin(angle)), (this.x * Math.sin(angle)) + (this.y * Math.cos(angle)));
-	    };
-	    Vector2d.prototype.lerp = function (vec, amount) {
-	        if (amount > 1) {
-	            amount = 1;
-	        }
-	        if (amount < 0) {
-	            amount = 0;
-	        }
-	        return this.mult(amount).add(vec.copy().mult(1 - amount));
-	    };
-	    Vector2d.prototype.invert = function () {
-	        var x = this.x * -1;
-	        var y = this.y * -1;
-	        return new Vector2d(x, y);
-	    };
-	    Vector2d.prototype.positioning = function (camera) {
-	        return this.invert().rotate(camera.rotation).mult(camera.zoom).add(camera.focus);
-	    };
-	    Vector2d.prototype.toArray = function () {
-	        return [this.x, this.y];
-	    };
-	    Vector2d.prototype.toString = function () {
-	        return "x:" +
-	            this.x.toFixed(2) +
-	            ", y:" +
-	            this.y.toFixed(2) +
-	            "\n";
-	    };
-	    return Vector2d;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Vector2d;
-
-
-/***/ },
-/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1047,7 +999,7 @@
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1102,12 +1054,12 @@
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var node_1 = __webpack_require__(9);
-	var bounds_node_1 = __webpack_require__(10);
+	var node_1 = __webpack_require__(8);
+	var bounds_node_1 = __webpack_require__(9);
 	var QuadTree = (function () {
 	    function QuadTree(bounds, pointQuad, maxDepth, maxChildren) {
 	        this.root = null;
@@ -1145,7 +1097,7 @@
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1257,7 +1209,7 @@
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1266,7 +1218,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var node_1 = __webpack_require__(9);
+	var node_1 = __webpack_require__(8);
 	var BoundsNode = (function (_super) {
 	    __extends(BoundsNode, _super);
 	    function BoundsNode(bounds, depth, maxChildren, maxDepth) {
@@ -1370,7 +1322,7 @@
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";

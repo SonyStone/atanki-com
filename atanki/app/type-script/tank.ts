@@ -30,11 +30,11 @@ export default class Tank {
 	public boundingBox: BoundingBox;
 	public isCollidingboundingBox: boolean = false;
 	public option: any = {
-		lowerBound: this.position,
-		upperBound: this.position.add(new Vector2d(5, 5)),
+		lowerBound: null,
+		upperBound: null,
 	};
 
-	public object: any = {
+	public object = {
 		gun: {
 			length: 30,
 			width: 10,
@@ -44,7 +44,16 @@ export default class Tank {
 			length: 40,
 			width: 30,
 		},
+		tank2: [
+			new Vector2d(-20, -15 ),
+			new Vector2d(20, -15 ),
+			new Vector2d(20, 15 ),
+			new Vector2d(-20, 15 ),
+			new Vector2d(20, 0 ),
+		]
 	};
+
+	public tankRotated: Vector2d[];
 
 
 
@@ -85,8 +94,40 @@ export default class Tank {
 		this.positionRotation = Vector2d.angleTo(this.pull, this.position);
 		this.position.x = this.pull.x - Math.cos(this.positionRotation) * 18;
 		this.position.y = this.pull.y - Math.sin(this.positionRotation) * 18;
+	}
 
-		this.option.upperBound = this.position.add(new Vector2d(50, 50));
+	public updateBoundingBox() {
+
+		let tankRotated: Vector2d[] = [];
+
+		for (let point of this.object.tank2) {
+			tankRotated.push(Vector2d.rotateAbout(
+				Vector2d.clone(this.position).add(point),
+				this.positionRotation,
+				this.position,
+			));
+		}
+		let min = Vector2d.clone(this.position);
+		let max =  Vector2d.clone(this.position);
+
+		for (let point of tankRotated) {
+			if (point.getX() < min.getX()) {
+				min.setX(point.getX());
+			}
+			if (point.getY() < min.getY()) {
+				min.setY(point.getY());
+			}
+			if (point.getX() > max.getX()) {
+				max.setX(point.getX());
+			}
+			if (point.getY() > max.getY()) {
+				max.setY(point.getY());
+			}
+		}
+		this.tankRotated = tankRotated;
+
+		this.option.lowerBound = min;
+		this.option.upperBound = max;
 		this.boundingBox = new BoundingBox(this.option);
 	}
 
@@ -113,7 +154,7 @@ export default class Tank {
 
 		ctx.save();
 		ctx.rotate(this.positionRotation);
-		this.tankPath(ctx);
+		this.tank2Path(ctx);
 		ctx.restore();
 
 		ctx.save();
@@ -132,6 +173,9 @@ export default class Tank {
 		ctx.moveTo(0, 0);
 		ctx.fillStyle = "#ff0000";
 		ctx.strokeStyle = "#00ff00";
+		ctx.lineWidth = 0.5;
+		ctx.lineJoin = "round";
+		ctx.lineCap = "round";
 		ctx.scale(scale, scale);
 
 		function pointDraw(rotation, positionX, positionY) {
@@ -152,14 +196,9 @@ export default class Tank {
 			if (radius === undefined) { radius = 10; }
 			angle1 = Utils.angleNormalize(angle1);
 			angle2 = Utils.angleNormalize(angle2);
-			var difference = angle1 - angle2;
+			let difference = angle1 - angle2;
 			ctx.save();
 			ctx.beginPath();
-			/*	if ((difference > 0 && difference < Math.PI) || difference < -Math.PI) {
-					ctx.arc(0, 0, radius, (angle1), (angle2), true);
-				} else {
-					ctx.arc(0, 0, radius, (angle1), (angle2), false);
-				}*/
 			if (Math.sin(difference) > 0) {
 				ctx.arc(0, 0, radius, (angle1), (angle2), true);
 			} else {
@@ -206,7 +245,13 @@ export default class Tank {
 			"rotation: " + this.rotation.toFixed(2) + "\n" +
 			"BoundingBox: " + this.boundingBox.bound.min.toString() + "\n" +
 			"option.lowerBound: " + this.option.lowerBound.toString() + "\n" +
-			"option.upperBound: " + this.option.upperBound.toString() + "\n";
+			"option.upperBound: " + this.option.upperBound.toString() + "\n" +
+			"tankRotated: " + "\n" +
+			this.tankRotated[0].toString() + "\n" +
+			this.tankRotated[1].toString() + "\n" +
+			this.tankRotated[2].toString() + "\n" +
+			this.tankRotated[3].toString() + "\n" +
+			this.tankRotated[4].toString() + "\n";
 	}
 
 	private tankPath(ctx) {
@@ -215,6 +260,22 @@ export default class Tank {
 		ctx.moveTo(this.object.tank.length / 2, 0);
 		ctx.lineTo(-this.object.tank.length / 2, this.object.tank.width / 2);
 		ctx.lineTo(-this.object.tank.length / 2, -this.object.tank.width / 2);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	private tank2Path(ctx) {
+		let draw: Vector2d[] = this.object.tank2;
+		ctx.beginPath();
+		ctx.moveTo(draw[0].x, draw[0].y);
+		ctx.lineTo(draw[1].x, draw[1].y);
+		ctx.lineTo(draw[2].x, draw[2].y);
+		ctx.lineTo(draw[3].x, draw[3].y);
+		ctx.closePath();
+		ctx.moveTo(draw[4].x, 0);
+		ctx.lineTo(draw[3].x, draw[3].y);
+		ctx.lineTo(draw[0].x, draw[0].y);
 		ctx.closePath();
 		ctx.fill();
 		ctx.stroke();

@@ -139,7 +139,7 @@ let easing = 0.08;
 	(<any>canvas).width = window.innerWidth;
 	(<any>canvas).height = window.innerHeight;
 
-	// this is maddness!
+	// this is maddness! I like maddness
 	if (keyboard.x.pressed) {
 		keyboard.x.pressed = false;
 		if (player + 1 < tanksAmount) {
@@ -180,6 +180,7 @@ let easing = 0.08;
 
 	for (let tank of tanks) {
 		tank.update();
+		tank.updateBoundingBox();
 		tank.draw(context);
 		tank.boundingBox.draw(context);
 	}
@@ -187,8 +188,8 @@ let easing = 0.08;
 	tanks[player].drawHelp(context);
 	box.draw(context);
 
-	// quadTreeBoundingBox(tanks, tree);
-	bruteForce(tanks);
+	quadTreeBoundingBox(tanks, tree);
+	// bruteForce(tanks);
 
 	drawNode(tree.root, context); // draw virtual quad-tree greed
 
