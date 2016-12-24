@@ -30,124 +30,23 @@ let cam = new Camera();
 let bounds = new Rectangle(0, 0, 1000, 1000);
 let tree = new QuadTree(bounds, false, 7);
 
-
-
-
-function drawNode(node: any, ctx) {
-	let bounds = node.bounds;
-
-	ctx.save();
-	ctx.translate(bounds.x, bounds.y);
-	ctx.scale(1, 1);
-	ctx.lineWidth = 2;
-
-	// ctx.fillStyle = this.color;
-	ctx.strokeStyle = "#2B2B2B";
-	ctx.globalAlpha = 1;
-
-	ctx.save();
-
-	ctx.beginPath();
-	ctx.rect(0, 0, bounds.width, bounds.height);
-	ctx.stroke();
-
-	ctx.restore();
-
-	ctx.restore();
-
-	let len = node.nodes.length;
-	for (let i = 0; i < len; i++) {
-		drawNode(node.nodes[i], ctx);
-	}
-}
-
-function quadTreeBoundingBox(tanks: Tank[], tree: QuadTree) {
-	// QuadTree
-	tree.clear();
-
-	tree.insert(tanks); // make virtual quad-tree greed
-	for (let tank of tanks) {
-		let items: Tank[] = tree.retrieve(tank);
-		for (let item of items) {
-			if (tank === item) {
-				continue;
-			}
-			if (tank.isColliding && item.isColliding) {
-				continue;
-			}
-			if (BoundingBox.overlaps(tank.boundingBox, item.boundingBox)) {
-				tank.isColliding = true;
-				item.isColliding = true;
-			}
-		}
-	}
-
-}
-
-function quadTree(tanks: Tank[], tree: QuadTree) {
-	// QuadTree
-	tree.clear();
-
-	tree.insert(tanks); // make virtual quad-tree greed
-	for (let tank of tanks) {
-		let items: Tank[] = tree.retrieve(tank);
-		for (let item of items) {
-			if (tank === item) {
-				continue;
-			}
-			if ( tank.isColliding && item.isColliding) {
-				continue;
-			}
-
-			let d: Vector2d = tank.position.sub(item.position);
-			let radii = tank.radius + item.radius;
-			let colliding = d.magSq() < (radii * radii);
-			if (!tank.isColliding) {
-				tank.isColliding = colliding;
-			}
-			if (!item.isColliding) {
-				item.isColliding = colliding;
-			}
-		}
-	}
-
-}
-
-function bruteForce(tanks) {
-	for (let tank of tanks) {
-		for (let item of tanks) {
-			if (tank === item) {
-				continue;
-			}
-			if (tank.isColliding && item.isColliding) {
-				continue;
-			}
-			if (BoundingBox.overlaps(tank.boundingBox, item.boundingBox)) {
-				tank.isColliding = true;
-				item.isColliding = true;
-			}
-		}
-	}
-}
-
 let camTarget = new Vector2d((<any>canvas).width / 2, (<any>canvas).height / 2);
 let easing = 0.08;
-
 
 (function drawFrame() {
 	(<any>window).requestAnimationFrame(drawFrame, canvas);
 	(<any>canvas).width = window.innerWidth;
 	(<any>canvas).height = window.innerHeight;
 
-	// this is maddness! I like maddness
 	if (keyboard.x.pressed) {
 		keyboard.x.pressed = false;
-		if (player + 1 < tanksAmount) {
-			player++;
+		if (player - 1 > -1) {
+			player--;
 		} else {
-			player = 0;
+			player = tanksAmount - 1;
 		}
 	}
+
 	if (keyboard.z.pressed) {
 		keyboard.z.pressed = false;
 		if (player - 1 > -1) {
@@ -177,7 +76,6 @@ let easing = 0.08;
 	context.fillRect(123, -215, 100, 100);
 	context.fillRect(-133, 132, 100, 100);
 
-
 	for (let tank of tanks) {
 		tank.update();
 		tank.updateBoundingBox();
@@ -188,10 +86,10 @@ let easing = 0.08;
 	tanks[player].drawHelp(context);
 	box.draw(context);
 
-	quadTreeBoundingBox(tanks, tree);
-	// bruteForce(tanks);
+	// tree.boundingBox(tanks);
+	tree.bruteForce(tanks); // temporarily
 
-	drawNode(tree.root, context); // draw virtual quad-tree greed
+	tree.draw(context); // draw virtual quad-tree greed
 
 	context.restore();
 
@@ -204,7 +102,6 @@ let easing = 0.08;
 
 	(<any>log).value += "--- canvas ---" + "\n";
 	(<any>log).value += "cam " + cam.toString() + "\n";
-
 
 	(<any>log).value += "--- tank ---" + "\n";
 	(<any>log).value += "play tank #" + player + "\n";

@@ -30,19 +30,19 @@ export default class Tank {
 	public boundingBox: BoundingBox;
 	public isCollidingboundingBox: boolean = false;
 	public option: any = {
-		lowerBound: null,
-		upperBound: null,
+		lowerBound: null as Vector2d,
+		upperBound: null as Vector2d,
 	};
 
 	public object = {
 		gun: {
-			length: 30,
-			width: 10,
-			turretRadius: 10,
+			length: 30 as number,
+			width: 10 as number,
+			turretRadius: 10 as number,
 		},
 		tank: {
-			length: 40,
-			width: 30,
+			length: 40 as number,
+			width: 30 as number,
 		},
 		tank2: [
 			new Vector2d(-20, -15 ),
@@ -50,7 +50,7 @@ export default class Tank {
 			new Vector2d(20, 15 ),
 			new Vector2d(-20, 15 ),
 			new Vector2d(20, 0 ),
-		]
+		] as Vector2d[],
 	};
 
 	public tankRotated: Vector2d[];

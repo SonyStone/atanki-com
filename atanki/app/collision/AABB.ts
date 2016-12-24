@@ -15,7 +15,7 @@ export default class BoundingBox {
 		min: <Vector2d> null,
 	};
 
-	constructor (options?) {
+	constructor(options?) {
 		options = options || {};
 		this.bound.min = options.lowerBound ? Vector2d.clone(options.lowerBound) : new Vector2d();
 		this.bound.max = options.upperBound ? Vector2d.clone(options.upperBound) : new Vector2d();

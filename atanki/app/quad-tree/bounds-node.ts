@@ -1,12 +1,13 @@
 import Node from "./node";
+import Rectangle from "../lib/rectangle";
 
 export default class BoundsNode extends Node {
 	protected classConstructor = BoundsNode;
 	private stuckChildren = null;
 	private out = [];
 
-	constructor (bounds, depth, maxChildren, maxDepth) {
-		super(bounds, depth, maxChildren, maxDepth);
+	constructor (bounds: Rectangle, depth: number, maxDepth: number, maxChildren: number) {
+		super(bounds, depth, maxDepth, maxChildren);
 		this.stuckChildren = [];
 	}
 

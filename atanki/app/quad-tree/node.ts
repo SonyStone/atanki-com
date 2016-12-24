@@ -1,19 +1,21 @@
+import Rectangle from "../lib/rectangle";
+
 export default class Node {
 	protected static TOP_LEFT = 0;
 	protected static TOP_RIGHT = 1;
 	protected static BOTTOM_LEFT = 2;
 	protected static BOTTOM_RIGHT = 3;
 
-	public nodes: any = null;
-	public children: any = null;
+	public nodes: any[] = null;
+	public children: any[] = null;
+	public bounds: Rectangle = null;
 
 	protected classConstructor = Node;
-	public bounds: any = null;
 	protected depth = 0;
 	protected maxChildren = 4;
 	protected maxDepth = 4;
 
-	constructor(bounds, depth, maxDepth, maxChildren) {
+	constructor(bounds: Rectangle, depth: number, maxDepth: number, maxChildren: number) {
 		this.bounds = bounds;
 		this.children = [];
 		this.nodes = [];
@@ -50,52 +52,50 @@ export default class Node {
 		let by = this.bounds.y;
 
 		// floor the values
-		let b_w_h = (this.bounds.width / 2 );
-		let b_h_h = (this.bounds.height / 2 );
+		let b_w_h = (this.bounds.width / 2);
+		let b_h_h = (this.bounds.height / 2);
 		let bx_b_w_h = bx + b_w_h;
 		let by_b_h_h = by + b_h_h;
 
 		// top left
-		this.nodes[Node.TOP_LEFT] = new this.classConstructor({
-			x: bx,
-			y: by,
-			width: b_w_h,
-			height: b_h_h,
-		}, depth, this.maxDepth, this.maxChildren);
+		this.nodes[Node.TOP_LEFT] = new this.classConstructor(
+			new Rectangle(bx, by, b_w_h, b_h_h),
+			depth, this.maxDepth, this.maxChildren);
 
 		// top right
-		this.nodes[Node.TOP_RIGHT] = new this.classConstructor({
-			x: bx_b_w_h,
-			y: by,
-			width: b_w_h,
-			height: b_h_h,
-		}, depth, this.maxDepth, this.maxChildren);
+		this.nodes[Node.TOP_RIGHT] = new this.classConstructor(
+			new Rectangle(bx_b_w_h, by, b_w_h, b_h_h),
+			depth, this.maxDepth, this.maxChildren);
 
 		// bottom left
-		this.nodes[Node.BOTTOM_LEFT] = new this.classConstructor({
-			x: bx,
-			y: by_b_h_h,
-			width: b_w_h,
-			height: b_h_h,
-		}, depth, this.maxDepth, this.maxChildren);
+		this.nodes[Node.BOTTOM_LEFT] = new this.classConstructor(
+			new Rectangle(bx, by_b_h_h, b_w_h, b_h_h),
+			depth, this.maxDepth, this.maxChildren);
 
 		// bottom right
-		this.nodes[Node.BOTTOM_RIGHT] = new this.classConstructor({
-			x: bx_b_w_h,
-			y: by_b_h_h,
-			width: b_w_h,
-			height: b_h_h,
-		}, depth, this.maxDepth, this.maxChildren);
+		this.nodes[Node.BOTTOM_RIGHT] = new this.classConstructor(
+			new Rectangle(bx_b_w_h, by_b_h_h, b_w_h, b_h_h),
+			depth, this.maxDepth, this.maxChildren);
 	}
 
 	public clear() {
 		this.children.length = 0;
-		var len = this.nodes.length;
+		let len = this.nodes.length;
 		for (let i = 0; i < len; i++) {
 			this.nodes[i].clear();
 		}
 		this.nodes.length = 0;
+	}
 
+	public draw(context) {
+		let bounds = this.bounds;
+
+		bounds.draw(context);
+
+		let len = this.nodes.length;
+		for (let node of this.nodes) {
+			node.draw(context);
+		}
 	}
 
 	protected findIndex(item) {
@@ -122,4 +122,6 @@ export default class Node {
 		}
 		return index;
 	}
+
+
 }

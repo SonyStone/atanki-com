@@ -40,6 +40,9 @@ export default class Vector2d {
 		);
 	}
 
+	/**
+	 * Rotate a vector by an angle
+	 */
 	public static rotate(vector: Vector2d, angle: number): Vector2d {
 		return new Vector2d(
 			(vector.getX() * Math.cos(angle)) - (vector.getY() * Math.sin(angle)),
@@ -47,6 +50,9 @@ export default class Vector2d {
 		);
 	}
 
+	/**
+	 * Rotates the vector about a specified point by specified angle.
+	 */
 	public static rotateAbout(vectorA, angle, vectorB): Vector2d {
 		let cos = Math.cos(angle);
 		let sin = Math.sin(angle);
@@ -91,6 +97,14 @@ export default class Vector2d {
 		this.y = y || 0;
 	}
 
+	public getX(): number {
+		return this.x;
+	}
+
+	public getY(): number {
+		return this.y;
+	}
+
 	/**
 	 * Modifies, return set the components of the vector
 	 * with black magic
@@ -109,15 +123,6 @@ export default class Vector2d {
 		return this;
 	}
 
-	/**
-	 * Modifies, return vector with zero coordinates
-	 */
-	public setZero(): Vector2d {
-		this.x = 0;
-		this.y = 0;
-		return this;
-	}
-
 	public setX(x: number): Vector2d {
 		this.x = x;
 		return this;
@@ -127,13 +132,13 @@ export default class Vector2d {
 		this.y = y;
 		return this;
 	}
-
-	public getX(): number {
-		return this.x;
-	}
-
-	public getY(): number {
-		return this.y;
+	/**
+	 * Modifies, return vector with zero coordinates
+	 */
+	public setZero(): Vector2d {
+		this.x = 0;
+		this.y = 0;
+		return this;
 	}
 
 	/**

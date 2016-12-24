@@ -51,8 +51,7 @@
 	var box_1 = __webpack_require__(5);
 	var camera_1 = __webpack_require__(6);
 	var quad_tree_1 = __webpack_require__(7);
-	var rectangle_1 = __webpack_require__(10);
-	var AABB_1 = __webpack_require__(4);
+	var rectangle_1 = __webpack_require__(9);
 	var canvas = document.getElementById("canvas");
 	var context = canvas.getContext("2d");
 	var mouse = utils_1.default.captureMouse(canvas);
@@ -69,90 +68,6 @@
 	var cam = new camera_1.default();
 	var bounds = new rectangle_1.default(0, 0, 1000, 1000);
 	var tree = new quad_tree_1.default(bounds, false, 7);
-	function drawNode(node, ctx) {
-	    var bounds = node.bounds;
-	    ctx.save();
-	    ctx.translate(bounds.x, bounds.y);
-	    ctx.scale(1, 1);
-	    ctx.lineWidth = 2;
-	    ctx.strokeStyle = "#2B2B2B";
-	    ctx.globalAlpha = 1;
-	    ctx.save();
-	    ctx.beginPath();
-	    ctx.rect(0, 0, bounds.width, bounds.height);
-	    ctx.stroke();
-	    ctx.restore();
-	    ctx.restore();
-	    var len = node.nodes.length;
-	    for (var i = 0; i < len; i++) {
-	        drawNode(node.nodes[i], ctx);
-	    }
-	}
-	function quadTreeBoundingBox(tanks, tree) {
-	    tree.clear();
-	    tree.insert(tanks);
-	    for (var _i = 0, tanks_1 = tanks; _i < tanks_1.length; _i++) {
-	        var tank = tanks_1[_i];
-	        var items = tree.retrieve(tank);
-	        for (var _a = 0, items_1 = items; _a < items_1.length; _a++) {
-	            var item = items_1[_a];
-	            if (tank === item) {
-	                continue;
-	            }
-	            if (tank.isColliding && item.isColliding) {
-	                continue;
-	            }
-	            if (AABB_1.default.overlaps(tank.boundingBox, item.boundingBox)) {
-	                tank.isColliding = true;
-	                item.isColliding = true;
-	            }
-	        }
-	    }
-	}
-	function quadTree(tanks, tree) {
-	    tree.clear();
-	    tree.insert(tanks);
-	    for (var _i = 0, tanks_2 = tanks; _i < tanks_2.length; _i++) {
-	        var tank = tanks_2[_i];
-	        var items = tree.retrieve(tank);
-	        for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
-	            var item = items_2[_a];
-	            if (tank === item) {
-	                continue;
-	            }
-	            if (tank.isColliding && item.isColliding) {
-	                continue;
-	            }
-	            var d = tank.position.sub(item.position);
-	            var radii = tank.radius + item.radius;
-	            var colliding = d.magSq() < (radii * radii);
-	            if (!tank.isColliding) {
-	                tank.isColliding = colliding;
-	            }
-	            if (!item.isColliding) {
-	                item.isColliding = colliding;
-	            }
-	        }
-	    }
-	}
-	function bruteForce(tanks) {
-	    for (var _i = 0, tanks_3 = tanks; _i < tanks_3.length; _i++) {
-	        var tank = tanks_3[_i];
-	        for (var _a = 0, tanks_4 = tanks; _a < tanks_4.length; _a++) {
-	            var item = tanks_4[_a];
-	            if (tank === item) {
-	                continue;
-	            }
-	            if (tank.isColliding && item.isColliding) {
-	                continue;
-	            }
-	            if (AABB_1.default.overlaps(tank.boundingBox, item.boundingBox)) {
-	                tank.isColliding = true;
-	                item.isColliding = true;
-	            }
-	        }
-	    }
-	}
 	var camTarget = new vector2d_1.default(canvas.width / 2, canvas.height / 2);
 	var easing = 0.08;
 	(function drawFrame() {
@@ -161,11 +76,11 @@
 	    canvas.height = window.innerHeight;
 	    if (keyboard.x.pressed) {
 	        keyboard.x.pressed = false;
-	        if (player + 1 < tanksAmount) {
-	            player++;
+	        if (player - 1 > -1) {
+	            player--;
 	        }
 	        else {
-	            player = 0;
+	            player = tanksAmount - 1;
 	        }
 	    }
 	    if (keyboard.z.pressed) {
@@ -190,8 +105,8 @@
 	    context.fillRect(-565, 300, 100, 100);
 	    context.fillRect(123, -215, 100, 100);
 	    context.fillRect(-133, 132, 100, 100);
-	    for (var _i = 0, tanks_5 = tanks; _i < tanks_5.length; _i++) {
-	        var tank = tanks_5[_i];
+	    for (var _i = 0, tanks_1 = tanks; _i < tanks_1.length; _i++) {
+	        var tank = tanks_1[_i];
 	        tank.update();
 	        tank.updateBoundingBox();
 	        tank.draw(context);
@@ -199,8 +114,8 @@
 	    }
 	    tanks[player].drawHelp(context);
 	    box.draw(context);
-	    quadTreeBoundingBox(tanks, tree);
-	    drawNode(tree.root, context);
+	    tree.bruteForce(tanks);
+	    tree.draw(context);
 	    context.restore();
 	    log.value = null;
 	    log.value += "--- canvas ---" + "\n";
@@ -264,6 +179,12 @@
 	        return ((vectorA.getX() > vectorB.getX()) &&
 	            (vectorA.getY() > vectorB.getY()));
 	    };
+	    Vector2d.prototype.getX = function () {
+	        return this.x;
+	    };
+	    Vector2d.prototype.getY = function () {
+	        return this.y;
+	    };
 	    Vector2d.prototype.set = function (xOrVec, y) {
 	        if (typeof xOrVec === "object") {
 	            this.x = xOrVec.x;
@@ -275,11 +196,6 @@
 	        }
 	        return this;
 	    };
-	    Vector2d.prototype.setZero = function () {
-	        this.x = 0;
-	        this.y = 0;
-	        return this;
-	    };
 	    Vector2d.prototype.setX = function (x) {
 	        this.x = x;
 	        return this;
@@ -288,11 +204,10 @@
 	        this.y = y;
 	        return this;
 	    };
-	    Vector2d.prototype.getX = function () {
-	        return this.x;
-	    };
-	    Vector2d.prototype.getY = function () {
-	        return this.y;
+	    Vector2d.prototype.setZero = function () {
+	        this.x = 0;
+	        this.y = 0;
+	        return this;
 	    };
 	    Vector2d.prototype.copy = function () {
 	        return new Vector2d(this.x, this.y);
@@ -695,7 +610,7 @@
 	                new vector2d_1.default(20, 15),
 	                new vector2d_1.default(-20, 15),
 	                new vector2d_1.default(20, 0),
-	            ]
+	            ],
 	        };
 	        this.pull = new vector2d_1.default(x, y) || new vector2d_1.default();
 	    }
@@ -1059,7 +974,8 @@
 
 	"use strict";
 	var node_1 = __webpack_require__(8);
-	var bounds_node_1 = __webpack_require__(9);
+	var bounds_node_1 = __webpack_require__(10);
+	var AABB_1 = __webpack_require__(4);
 	var QuadTree = (function () {
 	    function QuadTree(bounds, pointQuad, maxDepth, maxChildren) {
 	        this.root = null;
@@ -1090,6 +1006,80 @@
 	        var out = this.root.retrieve(item).slice(0);
 	        return out;
 	    };
+	    QuadTree.prototype.draw = function (context) {
+	        var bounds = this.root.bounds;
+	        bounds.draw(context);
+	        var len = this.root.nodes.length;
+	        for (var _i = 0, _a = this.root.nodes; _i < _a.length; _i++) {
+	            var node = _a[_i];
+	            node.draw(context);
+	        }
+	    };
+	    QuadTree.prototype.boundingBox = function (items) {
+	        this.clear();
+	        this.insert(items);
+	        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+	            var item = items_1[_i];
+	            var itemsB = this.retrieve(item);
+	            for (var _a = 0, itemsB_1 = itemsB; _a < itemsB_1.length; _a++) {
+	                var itemB = itemsB_1[_a];
+	                if (item === itemB) {
+	                    continue;
+	                }
+	                if (item.isColliding && itemB.isColliding) {
+	                    continue;
+	                }
+	                if (AABB_1.default.overlaps(item.boundingBox, itemB.boundingBox)) {
+	                    item.isColliding = true;
+	                    itemB.isColliding = true;
+	                }
+	            }
+	        }
+	    };
+	    QuadTree.prototype.boundingCircle = function (items) {
+	        this.clear();
+	        this.insert(items);
+	        for (var _i = 0, items_2 = items; _i < items_2.length; _i++) {
+	            var item = items_2[_i];
+	            var itemsB = this.retrieve(item);
+	            for (var _a = 0, itemsB_2 = itemsB; _a < itemsB_2.length; _a++) {
+	                var itemB = itemsB_2[_a];
+	                if (item === itemB) {
+	                    continue;
+	                }
+	                if (item.isColliding && itemB.isColliding) {
+	                    continue;
+	                }
+	                var d = item.position.sub(itemB.position);
+	                var radii = item.radius + itemB.radius;
+	                var colliding = d.magSq() < (radii * radii);
+	                if (!item.isColliding) {
+	                    item.isColliding = colliding;
+	                }
+	                if (!itemB.isColliding) {
+	                    itemB.isColliding = colliding;
+	                }
+	            }
+	        }
+	    };
+	    QuadTree.prototype.bruteForce = function (items) {
+	        for (var _i = 0, items_3 = items; _i < items_3.length; _i++) {
+	            var item = items_3[_i];
+	            for (var _a = 0, items_4 = items; _a < items_4.length; _a++) {
+	                var itemB = items_4[_a];
+	                if (item === itemB) {
+	                    continue;
+	                }
+	                if (item.isColliding && itemB.isColliding) {
+	                    continue;
+	                }
+	                if (AABB_1.default.overlaps(item.boundingBox, itemB.boundingBox)) {
+	                    item.isColliding = true;
+	                    itemB.isColliding = true;
+	                }
+	            }
+	        }
+	    };
 	    return QuadTree;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1098,15 +1088,16 @@
 
 /***/ },
 /* 8 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var rectangle_1 = __webpack_require__(9);
 	var Node = (function () {
 	    function Node(bounds, depth, maxDepth, maxChildren) {
 	        this.nodes = null;
 	        this.children = null;
-	        this.classConstructor = Node;
 	        this.bounds = null;
+	        this.classConstructor = Node;
 	        this.depth = 0;
 	        this.maxChildren = 4;
 	        this.maxDepth = 4;
@@ -1145,30 +1136,10 @@
 	        var b_h_h = (this.bounds.height / 2);
 	        var bx_b_w_h = bx + b_w_h;
 	        var by_b_h_h = by + b_h_h;
-	        this.nodes[Node.TOP_LEFT] = new this.classConstructor({
-	            x: bx,
-	            y: by,
-	            width: b_w_h,
-	            height: b_h_h,
-	        }, depth, this.maxDepth, this.maxChildren);
-	        this.nodes[Node.TOP_RIGHT] = new this.classConstructor({
-	            x: bx_b_w_h,
-	            y: by,
-	            width: b_w_h,
-	            height: b_h_h,
-	        }, depth, this.maxDepth, this.maxChildren);
-	        this.nodes[Node.BOTTOM_LEFT] = new this.classConstructor({
-	            x: bx,
-	            y: by_b_h_h,
-	            width: b_w_h,
-	            height: b_h_h,
-	        }, depth, this.maxDepth, this.maxChildren);
-	        this.nodes[Node.BOTTOM_RIGHT] = new this.classConstructor({
-	            x: bx_b_w_h,
-	            y: by_b_h_h,
-	            width: b_w_h,
-	            height: b_h_h,
-	        }, depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.TOP_LEFT] = new this.classConstructor(new rectangle_1.default(bx, by, b_w_h, b_h_h), depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.TOP_RIGHT] = new this.classConstructor(new rectangle_1.default(bx_b_w_h, by, b_w_h, b_h_h), depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.BOTTOM_LEFT] = new this.classConstructor(new rectangle_1.default(bx, by_b_h_h, b_w_h, b_h_h), depth, this.maxDepth, this.maxChildren);
+	        this.nodes[Node.BOTTOM_RIGHT] = new this.classConstructor(new rectangle_1.default(bx_b_w_h, by_b_h_h, b_w_h, b_h_h), depth, this.maxDepth, this.maxChildren);
 	    };
 	    Node.prototype.clear = function () {
 	        this.children.length = 0;
@@ -1177,6 +1148,15 @@
 	            this.nodes[i].clear();
 	        }
 	        this.nodes.length = 0;
+	    };
+	    Node.prototype.draw = function (context) {
+	        var bounds = this.bounds;
+	        bounds.draw(context);
+	        var len = this.nodes.length;
+	        for (var _i = 0, _a = this.nodes; _i < _a.length; _i++) {
+	            var node = _a[_i];
+	            node.draw(context);
+	        }
 	    };
 	    Node.prototype.findIndex = function (item) {
 	        var b = this.bounds;
@@ -1210,6 +1190,38 @@
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Rectangle = (function () {
+	    function Rectangle(x, y, width, height) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = width;
+	        this.height = height;
+	    }
+	    Rectangle.prototype.draw = function (context) {
+	        context.save();
+	        context.translate(this.x, this.y);
+	        context.scale(1, 1);
+	        context.lineWidth = 2;
+	        context.strokeStyle = "#2B2B2B";
+	        context.globalAlpha = 1;
+	        context.save();
+	        context.beginPath();
+	        context.rect(0, 0, this.width, this.height);
+	        context.stroke();
+	        context.restore();
+	        context.restore();
+	    };
+	    return Rectangle;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Rectangle;
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1221,8 +1233,8 @@
 	var node_1 = __webpack_require__(8);
 	var BoundsNode = (function (_super) {
 	    __extends(BoundsNode, _super);
-	    function BoundsNode(bounds, depth, maxChildren, maxDepth) {
-	        var _this = _super.call(this, bounds, depth, maxChildren, maxDepth) || this;
+	    function BoundsNode(bounds, depth, maxDepth, maxChildren) {
+	        var _this = _super.call(this, bounds, depth, maxDepth, maxChildren) || this;
 	        _this.classConstructor = BoundsNode;
 	        _this.stuckChildren = null;
 	        _this.out = [];
@@ -1319,24 +1331,6 @@
 	}(node_1.default));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = BoundsNode;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	"use strict";
-	var Rectangle = (function () {
-	    function Rectangle(x, y, width, height) {
-	        this.x = x;
-	        this.y = y;
-	        this.width = width;
-	        this.height = height;
-	    }
-	    return Rectangle;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Rectangle;
 
 
 /***/ }
