@@ -76,11 +76,11 @@
 	    canvas.height = window.innerHeight;
 	    if (keyboard.x.pressed) {
 	        keyboard.x.pressed = false;
-	        if (player - 1 > -1) {
-	            player--;
+	        if (player < tanksAmount) {
+	            player++;
 	        }
 	        else {
-	            player = tanksAmount - 1;
+	            player = 0;
 	        }
 	    }
 	    if (keyboard.z.pressed) {
