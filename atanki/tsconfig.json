@@ -13,7 +13,7 @@
 		"node_modules",
 		"wwwroot/lib",
 		"bin",
-		"dynamic-AABB"
+		"app/dynamic-AABB"
 	],
 	"awesomeTypescriptLoaderOptions": {
 		/* ... */

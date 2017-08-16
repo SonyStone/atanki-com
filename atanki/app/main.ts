@@ -8,6 +8,8 @@ import QuadTree from "./quad-tree/quad-tree";
 import Rectangle from "./lib/rectangle";
 import BoundingBox from "./collision/AABB";
 
+import * as PIXI from 'pixi.js';
+
 let canvas = document.getElementById("canvas");
 let context = (<any>canvas).getContext("2d");
 let mouse = Utils.captureMouse((<any>canvas));
@@ -16,12 +18,14 @@ let log = document.getElementById("log");
 
 
 let tanks: Tank[] = [];
-let tanksAmount = 20;
+let tanksAmount = 10;
 let player = 0;
 for (let i = 0; i < tanksAmount; i++) {
 	tanks.push(new Tank(Math.random() * 1000, Math.random() * 1000));
 	tanks[i].color = Utils.HSBtoRGB(Math.random() * 360, 75, 75);
 }
+
+let Sprite = PIXI.Sprite;
 
 let box = new Box();
 let cam = new Camera();
@@ -40,7 +44,7 @@ let easing = 0.08;
 
 	if (keyboard.x.pressed) {
 		keyboard.x.pressed = false;
-		if (player < tanksAmount) {
+		if (player < tanksAmount - 1) {
 			player++;
 		} else {
 			player = 0;
