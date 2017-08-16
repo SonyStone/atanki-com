@@ -4,15 +4,21 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    // no tests for now
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    // compile bundle.js
+    "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "pixi.js": "^4.5.3"
+  },
   "devDependencies": {
     "awesome-typescript-loader": "^3.0.0-beta.17",
     "typescript": "^2.1.4",
+    "file-loader": "^0.11.2",
     "webpack": "^1.14.0"
   }
 }

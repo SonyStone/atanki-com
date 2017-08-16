@@ -1,0 +1,13 @@
+collision
+	AABB
+		axis-aligned bounding box — параллельный осям ограничивающий прямоугольник
+	Broadphase
+		Широкая фаза
+		поиск потенциально пересекающихся объектов их AABB or BOUNDING_CIRCLE.
+		предположительно Brute-force
+	Naive Broadphase
+	Narrowphase
+		Узкая фаза
+	Ray
+	Raycast Result
+	SAPBroadphase
