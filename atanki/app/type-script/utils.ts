@@ -1,7 +1,7 @@
 import Vector2d from "../math/vector2d";
 
 export default class Utils {
-	public static captureMouse(element: HTMLAnchorElement) {
+	public static captureMouse(element: HTMLElement) {
 		let mouse = {
 			x: 0,
 			y: 0,
@@ -74,7 +74,7 @@ export default class Utils {
 		return mouse;
 	};
 
-	public static captureTouch(element: HTMLAnchorElement) {
+	public static captureTouch(element: HTMLElement) {
 		let touch = { x: null, y: null, isPressed: false };
 
 		element.addEventListener('touchstart', function (event) {
@@ -97,7 +97,7 @@ export default class Utils {
 		return touch;
 	}
 
-	public static captureKeyboard(element: HTMLAnchorElement) {
+	public static captureKeyboard(element: Window) {
 		let key = {
 			left: { code: 37, pressed: false },
 			right: { code: 39, pressed: false },
@@ -141,7 +141,7 @@ export default class Utils {
 	}
 
 	// do we realy need this method?
-	public static colorToRGB(color, alpha) {
+	public static colorToRGB(color: any, alpha: number) {
 		if (typeof color === 'string' && color[0] === '#') {
 			color = parseInt(color.slice(1), 16);
 		}
@@ -257,23 +257,70 @@ export default class Utils {
 		return RGB.color();
 	}
 
-	// public parseColor(color, toNumber) {
-	// 	if (toNumber === true) {
-	// 		if (typeof color === 'number') {
-	// 			return (color | 0); // chop off decimal
-	// 		}
-	// 		if (typeof color === 'string' && color[0] === '#') {
-	// 			color = color.slice(1);
-	// 		}
-	// 		return window.parseInt(color, 16);
-	// 	} else {
-	// 		if (typeof color === 'number') {
-	// 			// make sure our hexadecimal number is padded out
-	// 			color = '#' + ('00000' + (color | 0).toString(16)).substr(-6);
-	// 		}
-	// 		return color;
-	// 	}
-	// }
+	/**
+	 * Convert HSB color into number
+	 *
+	 * @param {number} hue in degrees (from 0 to 360)
+	 * @param {number} saturation in percent (from 0 to 100)
+	 * @param {number} brightness in percent (from 0 to 100)
+	 * @param {boolean} radians if true, used hue in radians
+	 * @return {number} color number
+	 */
+	public static HSBtoNumber(hue?, saturation?, brightness?, radians?) {
+		if (hue === undefined) { hue = 0; }
+		if (saturation === undefined) { saturation = 75; }
+		if (brightness === undefined) { brightness = 75; }
+		if (radians === undefined) { radians = false; }
+
+		if (radians) { hue *= 180 / Math.PI; }
+
+		var h, s, v, r, g, b, i, f, p, q, t;
+		h = hue / 360; s = saturation / 100; v = brightness / 100;
+		i = Math.floor( h * 6 );
+		f = h * 6 - i;
+		p = v * ( 1 - s );
+		q = v * ( 1 - f * s );
+		t = v * ( 1 - ( 1 - f ) * s );
+
+		switch( i % 6 ) {
+				case 0:
+				r = v; g = t; b = p;
+				break;
+			case 1:
+				r = q; g = v; b = p;
+				break;
+			case 2:
+				r = p; g = v; b = t;
+				break;
+			case 3:
+				r = p; g = q; b = v;
+				break;
+			case 4:
+				r = t; g = p; b = v;
+				break;
+			case 5:
+				r = v; g = p; b = q;
+				break;
+		}
+	}
+
+	public parseColor(color, toNumber) {
+		if (toNumber === true) {
+			if (typeof color === 'number') {
+				return (color | 0); // chop off decimal
+			}
+			if (typeof color === 'string' && color[0] === '#') {
+				color = color.slice(1);
+			}
+			return parseInt(color, 16);
+		} else {
+			if (typeof color === 'number') {
+				// make sure our hexadecimal number is padded out
+				color = '#' + ('00000' + (color | 0).toString(16)).substr(-6);
+			}
+			return color;
+		}
+	}
 
 	public static containsPoint(rect, x, y) {
 		return !(x < rect.x || x > rect.x + rect.width ||

@@ -1,35 +1,38 @@
-let path = require('path');
-const { CheckerPlugin } = require('awesome-typescript-loader');
+/**
+ * ```
+ * npm install webpack-merge --save-dev
+ * ```
+ * webpack-merge - Merge designed for Webpack
+ * [git]{@link https://github.com/survivejs/webpack-merge}
+ * [npm]{@link https://www.npmjs.com/package/webpack-merge}
+ */
+const merge = require('webpack-merge');
 
-module.exports = {
-	watch: true,
-	entry: './app/main',
-	output: {
-		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'dist'),
-	},
-	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx']
-	},
-	devtool: 'source-map',
-	module: {
-		rules: [
-			{
-				test: /\.ts$/,
-				use: ['awesome-typescript-loader'],
-			},
-			{ 
-				test: /\.js$/,
-				use: ["source-map-loader"],
-				enforce: "pre",
-			},
-			{
-				test: /\.(png|svg|jpg|gif)$/,
-				use: ['file-loader'],
-			}
-		]
-	},
-	plugins: [
-		new CheckerPlugin()
-	]
-}
+const watch = require('./config/webpack/watch');
+const entry = require('./config/webpack/entry');
+const resolve = require('./config/webpack/resolve');
+const devtool = require('./config/webpack/devtool');
+const output = require('./config/webpack/output');
+const awesomeTypescriptLoader = require('./config/webpack/rules/awesome-typescript-loader');
+const sourceMapLoader = require('./config/webpack/rules/source-map-loader');
+const fileLoader = require('./config/webpack/rules/file-loader');
+
+module.exports = function(env) {
+    if (env === 'prod') {
+        return merge([
+
+        ]);
+    };
+    if (env === 'dev') {
+        return merge([
+            watch(),
+            entry(),
+            output(),
+            resolve(),
+            devtool(),
+            awesomeTypescriptLoader(),
+            sourceMapLoader(),
+            fileLoader(),
+        ]);
+    };
+};

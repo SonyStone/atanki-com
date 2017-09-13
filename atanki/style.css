@@ -12,7 +12,7 @@ textarea {
 }
 
 #canvas {
-	background-color: #595959;
+	/* background-color: #595959; */
 	position: absolute; 
     left: 0px;
     right: 0px;
