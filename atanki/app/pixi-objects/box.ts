@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
 
-export default class Box {
+const Graphics = PIXI.Graphics
+
+export class Box {
 	
 	public x: number= 200;
 	public y: number = 200;
@@ -11,8 +13,8 @@ export default class Box {
 	private colorLine: number = 0x2B2B2B; // #2B2B2B
 	private context: PIXI.Graphics;
 
-	constructor(x: number, y: number, context: PIXI.Graphics) {
-		this.context = context;
+	constructor(x: number, y: number) {
+		this.context = new Graphics;
 		this.context
 			.lineStyle(3, this.colorLine, 1)
 			.beginFill(this.colorFill)

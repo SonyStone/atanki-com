@@ -1,6 +1,8 @@
 import Vector2d from "../math/vector2d";
 import * as PIXI from 'pixi.js';
 
+import { Vec2 } from './../math2/Vec2'
+
 let Container = PIXI.Container;
 
 export default class Camera {
@@ -19,8 +21,8 @@ export default class Camera {
 	/**
 	 * targeting
 	 */
-	public targeting(target: Vector2d) {
-		return target.mult(this.zoom).rotate(this.rotation).add(this.position);
+	public targeting(target: Vector2d): Vec2 {
+		return Vec2.mult(target, this.zoom).rotate(this.rotation).add(this.position);
 	}
 
 	/**
@@ -43,9 +45,6 @@ export default class Camera {
 		this.position = this.position.set(focus.positioning(this));
 	}
 
-	public focusingEasing(focus) {
-	// to do...
-	}
 
 	public draw(context) {
 		context.translate(this.position.x, this.position.y);
@@ -60,8 +59,9 @@ export default class Camera {
 	}
 
 	public toString() {
-	return this.position.toString() +
-		"zoom: " + this.zoom + "\n" +
-		"rotation: " + this.rotation + "\n";
-	}
+		return `camera \n` + 
+			`position: ${this.position}\n`+
+			`zoom: ${this.zoom}\n` +
+			`rotation: ${this.rotation}\n`;
+		}
 }

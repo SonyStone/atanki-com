@@ -5,6 +5,13 @@ module.exports = function() {
      * If an array is passed all items will be executed.
      * [Documentation]{@link https://webpack.js.org/configuration/entry-context/#entry}
      */
-    entry: './app/main',
+    entry: {
+      main: [
+        './app/main.ts',
+      ],
+      styles: [
+        './app/style.scss',
+      ],
+    },
   };
 };

@@ -1,4 +1,4 @@
-const path = require('path');
+const root = require('../helpers').root;
 
 module.exports = function() {
   return {
@@ -9,8 +9,8 @@ module.exports = function() {
      * [Documentation]{@link https://webpack.js.org/configuration/output/}
      */
     output: {
-      filename: 'bundle.js',
-      path: path.resolve(__dirname, 'dist'),
+      filename: 'bundle.[name].js',
+      path: root('dist'),
     },
   };
 };

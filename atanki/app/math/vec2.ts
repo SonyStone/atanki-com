@@ -89,7 +89,7 @@ export default class Vec2 {
      * Modifies, return set the components of the vector
      * with black magic
      */
-    public set(array: [])
+    public set(array: any[])
     public set(obj: object);
     public set(vec: Vec2): Vec2;
     public set(x: number, y: number): Vec2;

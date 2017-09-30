@@ -52,8 +52,9 @@ export default class Camera {
 	}
 
 	public toString() {
-	return this.position.toString() +
-		"zoom: " + this.zoom + "\n" +
-		"rotation: " + this.rotation + "\n";
+	return `camera \n` + 
+		`position: ${this.position}\n`+
+		`zoom: ${this.zoom}\n` +
+		`rotation: ${this.rotation}\n`;
 	}
 }
