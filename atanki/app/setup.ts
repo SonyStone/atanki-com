@@ -6,12 +6,9 @@ import {
     Rectangle,
     Graphics,
 } from 'pixi.js';
-// import * as Color from 'color-js/color';
 
 import { renderer } from './renderer';
 
-// import Utils from "./type-script/utils";
-// import Tank from "./type-script/tank";
 import { Box } from "./pixi-objects/box";
 import Camera from "./pixi-objects/camera";
 import Utils from "./type-script/utils";
@@ -23,12 +20,8 @@ import { Locator } from './pixi-objects/Locator';
 
 import Ellipse from './type-script/ellipse';
 
-// let Container = PIXI.Container;
 let resources = loader.resources;
-// let Sprite = PIXI.Sprite;
 let TextureCache = utils.TextureCache;
-// let Rectangle = PIXI.Rectangle;
-// let Graphics = PIXI.Graphics;
 
 let view = renderer.options.view
 
@@ -52,7 +45,7 @@ let locator2 = new Locator();
 let container = new Container()
 
 let tanks: Tank[] = [];
-let tanksAmount = 50;
+let tanksAmount = 100;
 let player = 0;
 
 
@@ -80,9 +73,6 @@ let count = 0
  * setup
  */
 export default function setup() {
-    cam = new Camera();
-
-
     ellipse = new Ellipse(0, 0);
     ellipse2 = new Ellipse(1200, 1200);
     box = new Box(200, 200);

@@ -34,7 +34,8 @@ export class Tank extends Container {
 
     constructor() {
         super()
-        this.pull = new Vector2d();
+		this.interactive = true;
+		this.pull = new Vector2d();
         const locator = new Locator().setTransform(0, 0, 10, 10);
 
         this.addChild(this.body);
